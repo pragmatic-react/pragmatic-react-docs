@@ -1,7 +1,13 @@
 import "./App.css";
-
+import Header from "./components/Header";
+import MainPage from "./MainPage";
 function App() {
-  return <h1>Self-Paced React 2</h1>;
+  return (
+    <>
+      <Header />
+      <MainPage />
+    </>
+  );
 }
 
 export default App;
