@@ -1,6 +1,14 @@
+const categorySrc = {
+  한식: "./category-korean.png",
+  중식: "./category-chinese.png",
+  일식: "./category-japanese.png",
+  양식: "./category-western.png",
+  아시안: "./category-asian.png",
+  기타: "./category-etc.png",
+};
+
 export default function RestaurantItem({
-  categorySrc,
-  categoryAlt,
+  category,
   name,
   description,
   onClick,
@@ -19,7 +27,11 @@ export default function RestaurantItem({
       }}
     >
       <div className="restaurant__category">
-        <img src={categorySrc} alt={categoryAlt} className="category-icon" />
+        <img
+          src={categorySrc[category]}
+          alt={category}
+          className="category-icon"
+        />
       </div>
       <div className="restaurant__info">
         <h3 className="restaurant__name text-subtitle">{name}</h3>
