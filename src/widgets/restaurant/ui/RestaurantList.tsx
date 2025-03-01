@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useModal } from '@features/modal';
 import { RestaurantDetailDrawer } from '@features/restaurant';
@@ -10,7 +10,7 @@ import data from '../../../../db.json';
 export const RestaurantList = () => {
   const { restaurants } = data as { restaurants: Restaurant[] };
   const [selected, setSelected] = useState<Restaurant | null>(null);
-  const { openModal } = useModal();
+  const { isOpen, openModal } = useModal();
 
   const handleCardClick = (id: string) => () => {
     const restaurant = restaurants.find((restaurant) => restaurant.id === id);
@@ -19,6 +19,12 @@ export const RestaurantList = () => {
       openModal();
     }
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelected(null);
+    }
+  }, [isOpen]);
 
   return (
     <>
