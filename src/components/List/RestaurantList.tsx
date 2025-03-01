@@ -56,6 +56,7 @@ export default function RestaurantList({ restaurants }: RestaurantListProps) {
 
   return (
     <div className='divide-gray10 flex flex-col divide-y'>
+      {/* Restaurant List */}
       {restaurants.map((restaurant) => (
         <RestaurantCard
           key={restaurant.id}

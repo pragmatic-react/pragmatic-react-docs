@@ -4,22 +4,20 @@ import './App.css';
 import db from '../db.json';
 import RestaurantList from './components/List/RestaurantList';
 import { ModalProvider } from './components/Modal/ModalProvider';
-
+import Header from './components/Header/Header';
 function App() {
   const { restaurants } = db;
 
   return (
     <>
-      <div>
-        <header className='bg-orange px-4 py-[10px] text-white'>
-          <h1>점심 뭐 먹지</h1>
-        </header>
-        <main>
-          <ModalProvider>
+      <ModalProvider>
+        <div>
+          <Header />
+          <main>
             <RestaurantList restaurants={restaurants} />
-          </ModalProvider>
-        </main>
-      </div>
+          </main>
+        </div>
+      </ModalProvider>
       <div id='modal-root' />
     </>
   );

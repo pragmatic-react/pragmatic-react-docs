@@ -4,6 +4,9 @@ import DimmedLayer from './DimmedLayer';
 import ModalFooter from './ModalFooter';
 import ModalButton from './ModalButton';
 
+function ModalTitle({ children }: { children: React.ReactNode }) {
+  return <h2 className='text-lg font-bold'>{children}</h2>;
+}
 interface ModalProps {
   closeModal: () => void;
   children: React.ReactNode;
@@ -38,3 +41,4 @@ export default Modal;
 
 Modal.Footer = ModalFooter;
 Modal.Button = ModalButton;
+Modal.Title = ModalTitle;
