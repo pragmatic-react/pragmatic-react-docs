@@ -17,6 +17,9 @@ export default function Modal({ children, isOpen, onClose }) {
     // 모달이 열릴 때 모델에 포커스 되도록 설정
     ref.current.focus();
 
+    // 모달 뒤 컨텐츠가 스크린리더에서 읽히지 않도록 설정
+    document.body.setAttribute("aria-hidden", "true");
+
     // Tab 키로 포커스 순환
     function handleKeyDownTab(e) {
       if (e.key !== "Tab") return;
@@ -52,6 +55,7 @@ export default function Modal({ children, isOpen, onClose }) {
 
     return () => {
       document.body.style.overflow = "initial";
+      document.body.setAttribute("aria-hidden", "false");
       document.removeEventListener("keydown", handleKeyDownEscape);
       document.removeEventListener("keydown", handleKeyDownTab);
     };
