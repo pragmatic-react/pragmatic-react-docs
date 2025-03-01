@@ -29,6 +29,7 @@ function App() {
 
       <main>
         <CategoryFilter category={category} onChangeCategory={setCategory} />
+
         <RestaurantList
           restaurants={filteredRestaurants}
           handleRestaurantClick={handleRestaurantClick}
