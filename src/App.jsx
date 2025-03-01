@@ -1,7 +1,8 @@
 import "./App.css";
+import Container from "./index";
 
 function App() {
-  return <h1>Self-Paced React</h1>;
+  return <Container />;
 }
 
 export default App;
