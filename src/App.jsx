@@ -9,10 +9,19 @@ import { restaurants } from "./restaurantData";
 
 function App() {
   const [category, setCategory] = useState("전체");
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const filteredRestaurants =
     category === "전체"
       ? restaurants
       : restaurants.filter((restaurant) => restaurant.category === category);
+
+  const handleRestaurantClick = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRestaurant(null);
+  };
 
   return (
     <>
@@ -20,12 +29,20 @@ function App() {
 
       <main>
         <CategoryFilter category={category} onChangeCategory={setCategory} />
-        <RestaurantList restaurants={filteredRestaurants} />
+        <RestaurantList
+          restaurants={filteredRestaurants}
+          handleRestaurantClick={handleRestaurantClick}
+        />
       </main>
 
       <aside>
-        <RestaurantDetailModal />
-
+        {selectedRestaurant && (
+          <RestaurantDetailModal
+            selectedRestaurant={selectedRestaurant}
+            open={!!selectedRestaurant}
+            onClose={handleCloseModal}
+          />
+        )}
         {/* <AddRestaurantModal /> */}
       </aside>
     </>

@@ -7,12 +7,16 @@ const CATEGORY_ICON = {
   기타: "category-etc.png",
 };
 
-function RestaurantList({ restaurants }) {
+function RestaurantList({ restaurants, handleRestaurantClick }) {
   return (
     <section className="restaurant-list-container">
       <ul className="restaurant-list">
         {restaurants.map((restaurant) => (
-          <li key={restaurant.id} className="restaurant">
+          <li
+            key={restaurant.id}
+            className="restaurant"
+            onClick={() => handleRestaurantClick(restaurant)}
+          >
             <div className="restaurant__category">
               <img
                 src={`./src/assets/${CATEGORY_ICON[restaurant.category]}`}
