@@ -138,6 +138,7 @@ export default function Container() {
           title={selectedRestaurant.name}
           description={selectedRestaurant.description}
           isOpen={isOpenModal.detail}
+          onClose={toggleModal("detail", false)}
         >
           <button
             className="button button--primary text-caption"
@@ -148,7 +149,11 @@ export default function Container() {
         </RestaurantModal>
 
         {/* 음식점 추가 모달 */}
-        <RestaurantModal title="새로운 음식점" isOpen={isOpenModal.create}>
+        <RestaurantModal
+          title="새로운 음식점"
+          isOpen={isOpenModal.create}
+          onClose={toggleModal("create", false)}
+        >
           <form>
             <div className="form-item form-item--required">
               <label htmlFor="category" className="text-caption">
@@ -237,9 +242,9 @@ function RestaurantItem({
   );
 }
 
-function RestaurantModal({ title, description, children, isOpen }) {
+function RestaurantModal({ title, description, children, isOpen, onClose }) {
   return (
-    <Modal isOpen={isOpen}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <div className="modal modal--open">
         <div className="modal-backdrop"></div>
         <div className="modal-container">
