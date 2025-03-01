@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import Section from "./components/Section";
+import Section from "./UI/Section";
 import { RestaurantSection } from "./components/Restaurant";
 
 const MainPage = () => {
