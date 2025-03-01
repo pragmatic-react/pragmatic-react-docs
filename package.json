@@ -11,6 +11,8 @@
     "server": "npx json-server db.json"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.0.9",
+    "eslint-config": "^0.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -19,9 +21,13 @@
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "vite": "^5.2.0"
+    "prettier": "^3.5.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "vite": "^6.2.0"
   }
 }
