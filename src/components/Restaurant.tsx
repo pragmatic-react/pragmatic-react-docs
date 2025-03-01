@@ -1,11 +1,23 @@
+import { useState } from "react";
 import useRestaurants from "../hooks/useRestaurants";
 import { Restaurant as RestaurantType } from "../models";
+import RestaurantModal, { RestaurantModalData } from "./RestaurantModal";
 
-import Section from "./Section";
+import Section from "../UI/Section";
 
-const Restaurant = ({ restaurant }: { restaurant: RestaurantType }) => {
+const Restaurant = ({
+  restaurant,
+  onClick,
+}: {
+  restaurant: RestaurantType;
+  onClick: (data: RestaurantModalData) => void;
+}) => {
+  const onClickRestaurant = () => {
+    onClick(restaurant);
+  };
+
   return (
-    <li className="restaurant" key={restaurant.id}>
+    <li className="restaurant" key={restaurant.id} onClick={onClickRestaurant}>
       <div className="restaurant__category">
         <img
           src={restaurant.getCategeryImgSrc()}
@@ -23,12 +35,22 @@ const Restaurant = ({ restaurant }: { restaurant: RestaurantType }) => {
   );
 };
 
-const RestaurantList = ({ data }: { data: RestaurantType[] | undefined }) => {
+const RestaurantList = ({
+  data,
+  openRestaurantModal,
+}: {
+  data: RestaurantType[] | undefined;
+  openRestaurantModal: (data: RestaurantModalData) => void;
+}) => {
   return (
     <ul className="restaurant-list">
       {data &&
         data.map((restaurant) => (
-          <Restaurant restaurant={restaurant} key={restaurant.id} />
+          <Restaurant
+            restaurant={restaurant}
+            key={restaurant.id}
+            onClick={openRestaurantModal}
+          />
         ))}
     </ul>
   );
@@ -37,9 +59,32 @@ const RestaurantList = ({ data }: { data: RestaurantType[] | undefined }) => {
 const RestaurantSection = () => {
   const { restaurants } = useRestaurants();
 
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<RestaurantModalData>();
+
+  const openRestaurantModal = (data: RestaurantModalData) => {
+    setModalOpen(true);
+    setModalData(data);
+  };
+
+  const onCloseRestaurantModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <Section className="restaurant-list-container">
-      <RestaurantList data={restaurants} />
+      <RestaurantList
+        data={restaurants}
+        openRestaurantModal={openRestaurantModal}
+      />
+      <RestaurantModal
+        open={modalOpen}
+        restaurant={{
+          name: modalData?.name || "",
+          description: modalData?.description || "",
+        }}
+        onClose={onCloseRestaurantModal}
+      />
     </Section>
   );
 };
