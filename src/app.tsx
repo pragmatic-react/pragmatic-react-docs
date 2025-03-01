@@ -1,12 +1,16 @@
-import { Header } from './components';
+import { Header, RestaurantFilterSection } from './components';
+import { RestaurantList } from './components';
 import { GlobalStyle } from './global-style';
 
 function App() {
   return (
     <>
-      <Header />
       <GlobalStyle />
-      <h1>React Lunch</h1>
+      <Header />
+      <main>
+        <RestaurantFilterSection />
+        <RestaurantList />
+      </main>
     </>
   );
 }
