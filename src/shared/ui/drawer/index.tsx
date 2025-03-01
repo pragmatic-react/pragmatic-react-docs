@@ -6,51 +6,71 @@ export type DrawerProps = {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  closeOnEsc?: boolean;
 };
 
-const animationDuration = 300;
+const ANIMATION_DURATION = 300;
 
-export const Drawer = ({ isOpen, onClose, children }: DrawerProps) => {
+export const Drawer = ({ isOpen, onClose, children, closeOnEsc = true }: DrawerProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
+  // ESC 키 이벤트 처리
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && closeOnEsc) {
+        onClose();
+      }
+    };
+
+    if (isOpen && closeOnEsc) {
+      window.addEventListener('keydown', handleEscKey);
+      return () => window.removeEventListener('keydown', handleEscKey);
+    }
+  }, [isOpen, closeOnEsc, onClose]);
+
+  // 모달 열기/닫기 로직
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    let closeTimeout: NodeJS.Timeout;
+    const clearTimeoutSafely = () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = undefined;
+      }
+    };
 
     if (isOpen) {
+      clearTimeoutSafely();
       dialog.showModal();
 
       requestAnimationFrame(() => {
         setIsVisible(true);
       });
-
       return;
     }
-
     if (dialog.open) {
       setIsVisible(false);
 
-      closeTimeout = setTimeout(() => {
-        if (dialogRef.current && dialogRef.current.open) {
+      // 애니메이션 완료 후 닫기
+      timeoutRef.current = setTimeout(() => {
+        if (dialogRef.current?.open) {
           dialogRef.current.close();
         }
-      }, animationDuration);
+      }, ANIMATION_DURATION);
     }
 
-    return () => {
-      if (closeTimeout) clearTimeout(closeTimeout);
-    };
-  }, [isOpen, animationDuration]);
+    return clearTimeoutSafely;
+  }, [isOpen]);
 
   if (!isOpen && !isVisible && !dialogRef.current?.open) {
     return null;
   }
 
   return createPortal(
-    <dialog ref={dialogRef} className="fixed inset-0 z-50 bg-transparent">
+    <dialog ref={dialogRef} className="fixed inset-0 z-50 bg-transparent" onCancel={(e) => e.preventDefault()}>
       {/* Backdrop */}
       <div
         className={`bg-black fixed inset-0 transition-opacity duration-300 ${isVisible ? 'opacity-50' : 'opacity-0'}`}
