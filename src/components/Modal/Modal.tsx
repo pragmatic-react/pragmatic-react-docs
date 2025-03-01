@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import Portal from '../Portal';
 import DimmedLayer from './DimmedLayer';
+import ModalFooter from './ModalFooter';
+import ModalButton from './ModalButton';
 
 interface ModalProps {
   closeModal: () => void;
@@ -25,6 +27,7 @@ function Modal({ closeModal, isOpen = true, children }: ModalProps) {
       <DimmedLayer onClick={closeModal}>
         <div className='z-modal fixed bottom-0 mt-6 h-fit w-full rounded-t-lg bg-white px-4 py-8'>
           {children}
+          {/* Modal Footer */}
         </div>
       </DimmedLayer>
     </Portal>
@@ -32,3 +35,6 @@ function Modal({ closeModal, isOpen = true, children }: ModalProps) {
 }
 
 export default Modal;
+
+Modal.Footer = ModalFooter;
+Modal.Button = ModalButton;

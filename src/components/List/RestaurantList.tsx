@@ -63,6 +63,8 @@ export default function RestaurantList({ restaurants }: RestaurantListProps) {
           onSelect={handleSelectRestaurant}
         />
       ))}
+
+      {/* Modal */}
       {selectedRestaurant && (
         <Modal isOpen={isOpen} closeModal={closeModal}>
           <div className='flex flex-col gap-4'>
@@ -77,9 +79,17 @@ export default function RestaurantList({ restaurants }: RestaurantListProps) {
             </div>
             <div>
               <h3 className='text-lg font-bold'>{selectedRestaurant.name}</h3>
-              <p className='text-gray10'>{selectedRestaurant.description}</p>
+              <p className='text-black'>{selectedRestaurant.description}</p>
             </div>
           </div>
+          <Modal.Footer>
+            <Modal.Button onClick={closeModal} colorType='white'>
+              삭제하기
+            </Modal.Button>
+            <Modal.Button onClick={closeModal} colorType='orange'>
+              닫기
+            </Modal.Button>
+          </Modal.Footer>
         </Modal>
       )}
     </div>
