@@ -1,11 +1,11 @@
 import { ReactElement } from "react";
 import Section from "./UI/Section";
-import { RestaurantSection } from "./components/Restaurant";
+import Restaurants from "./components/Restaurants";
 
 const MainPage = () => {
   return (
     <main>
-      <RestaurantSection />
+      <Restaurants />
     </main>
   );
 };

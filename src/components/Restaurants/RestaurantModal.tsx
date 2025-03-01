@@ -1,5 +1,5 @@
-import Modal, { ModalType } from "../UI/Modal";
-import { Restaurant as RestaurantType } from "../models";
+import Modal, { ModalType } from "../../UI/Modal";
+import { Restaurant as RestaurantType } from "../../models";
 
 export type RestaurantModalData = Pick<RestaurantType, "name" | "description">;
 
