@@ -12,12 +12,9 @@ export const RestaurantList = () => {
   const [selected, setSelected] = useState<Restaurant | null>(null);
   const { isOpen, openModal } = useModal();
 
-  const handleCardClick = (id: string) => () => {
-    const restaurant = restaurants.find((restaurant) => restaurant.id === id);
-    if (restaurant) {
-      setSelected(restaurant);
-      openModal();
-    }
+  const handleCardClick = (restaurant: Restaurant) => () => {
+    setSelected(restaurant);
+    openModal();
   };
 
   useEffect(() => {

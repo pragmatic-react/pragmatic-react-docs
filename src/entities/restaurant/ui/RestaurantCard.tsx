@@ -3,14 +3,14 @@ import { RestaurantIcon } from './RestaurantIcon';
 
 type Props = {
   restaurant: Restaurant;
-  onClick: (id: string) => () => void;
+  onClick: (restaurant: Restaurant) => () => void;
 };
 
 export const RestaurantCard = ({ restaurant, onClick }: Props) => {
   const { category, name, description, id } = restaurant;
 
   return (
-    <li className="restaurant cursor-pointer" onClick={onClick(id)}>
+    <li className="restaurant cursor-pointer" onClick={onClick(restaurant)}>
       <RestaurantIcon category={category} name={name} />
 
       <div className="restaurant__info">
