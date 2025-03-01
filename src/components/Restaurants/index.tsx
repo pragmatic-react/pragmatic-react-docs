@@ -9,11 +9,17 @@ const RestaurantSection = () => {
   const { restaurants } = useRestaurants();
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [modalData, setModalData] = useState<RestaurantModalData>();
+  const [modalData, setModalData] = useState<RestaurantModalData>({
+    name: "",
+    description: "",
+  });
 
-  const openRestaurantModal = (data: RestaurantModalData) => {
+  const openRestaurantModal = (data: RestaurantType) => {
     setModalOpen(true);
-    setModalData(data);
+    setModalData({
+      name: modalData?.name || "",
+      description: modalData?.description || "",
+    });
   };
 
   const onCloseRestaurantModal = () => {
@@ -28,10 +34,7 @@ const RestaurantSection = () => {
       />
       <RestaurantModal
         open={modalOpen}
-        restaurant={{
-          name: modalData?.name || "",
-          description: modalData?.description || "",
-        }}
+        restaurant={modalData}
         onClose={onCloseRestaurantModal}
       />
     </Section>

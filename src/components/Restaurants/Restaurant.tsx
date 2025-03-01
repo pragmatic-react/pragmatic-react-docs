@@ -1,12 +1,11 @@
 import { Restaurant as RestaurantType } from "../../models";
-import RestaurantModal, { RestaurantModalData } from "./RestaurantModal";
 
 const Restaurant = ({
   restaurant,
   onClick,
 }: {
   restaurant: RestaurantType;
-  onClick: (data: RestaurantModalData) => void;
+  onClick: (data: RestaurantType) => void;
 }) => {
   const onClickRestaurant = () => {
     onClick(restaurant);

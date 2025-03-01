@@ -1,5 +1,4 @@
 import { Restaurant as RestaurantType } from "../../models";
-import RestaurantModal, { RestaurantModalData } from "./RestaurantModal";
 import Restaurant from "./Restaurant";
 
 const RestaurantList = ({
@@ -7,7 +6,7 @@ const RestaurantList = ({
   openRestaurantModal,
 }: {
   data: RestaurantType[] | undefined;
-  openRestaurantModal: (data: RestaurantModalData) => void;
+  openRestaurantModal: (data: RestaurantType) => void;
 }) => {
   return (
     <ul className="restaurant-list">
