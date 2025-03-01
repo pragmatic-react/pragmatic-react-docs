@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { Root, Title, Description, ButtonContainer } from "./pieces";
 
 // tab focus 가능한 요소
 const TABBABLE_TAGS =
@@ -69,3 +70,8 @@ export default function Modal({ children, isOpen, onClose }) {
     document.body
   );
 }
+
+Modal.Root = Root;
+Modal.Title = Title;
+Modal.Description = Description;
+Modal.ButtonContainer = ButtonContainer;

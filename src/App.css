@@ -275,6 +275,11 @@ input[name="link"] {
 
 .button-container {
   display: flex;
+  width: 100%;
+}
+
+.button-container > form {
+  width: 100%;
 }
 
 .button {
