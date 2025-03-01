@@ -1,5 +1,6 @@
 import { useState, useReducer } from "react";
-import Modal from "./components/modal";
+import RestaurantItem from "./components/restaurantItem";
+import RestaurantModal from "./components/restaurantModal";
 
 const restaurantData = [
   {
@@ -208,57 +209,5 @@ export default function Container() {
         </RestaurantModal>
       </aside>
     </div>
-  );
-}
-
-function RestaurantItem({
-  categorySrc,
-  categoryAlt,
-  name,
-  description,
-  onClick,
-}) {
-  return (
-    <li
-      className="restaurant"
-      onClick={onClick}
-      role="button"
-      tabIndex="0"
-      onKeyDown={(e) => {
-        // 엔터, 스페이스 키보드 이벤트 시
-        if (e.key === "Enter" || e.key === " ") {
-          onClick();
-        }
-      }}
-    >
-      <div className="restaurant__category">
-        <img src={categorySrc} alt={categoryAlt} className="category-icon" />
-      </div>
-      <div className="restaurant__info">
-        <h3 className="restaurant__name text-subtitle">{name}</h3>
-        <p className="restaurant__description text-body">{description}</p>
-      </div>
-    </li>
-  );
-}
-
-function RestaurantModal({ title, description, children, isOpen, onClose }) {
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="modal modal--open">
-        <div className="modal-backdrop"></div>
-        <div className="modal-container">
-          <h2 className="modal-title text-title">{title}</h2>
-          {description && (
-            <div className="restaurant-info">
-              <p className="restaurant-info__description text-body">
-                {description}
-              </p>
-            </div>
-          )}
-          <div className="button-container">{children}</div>
-        </div>
-      </div>
-    </Modal>
   );
 }
