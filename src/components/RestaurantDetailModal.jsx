@@ -5,18 +5,24 @@ function RestaurantDetailModal({ selectedRestaurant, onClose, open }) {
 
   const { name, description } = selectedRestaurant;
   return (
-    <Modal open={open} onClose={onClose} title={name}>
-      <div className="restaurant-info">
-        <p className="restaurant-info__description text-body">{description}</p>
-      </div>
-      <div className="button-container">
-        <button
-          className="button button--primary text-caption"
-          onClick={onClose}
-        >
-          닫기
-        </button>
-      </div>
+    <Modal open={open} onClose={onClose}>
+      <Modal.Header>
+        <Modal.Title>{name}</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <div className="restaurant-info">
+          <p className="restaurant-info__description text-body">
+            {description}
+          </p>
+        </div>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Modal.ButtonContainer>
+          <Modal.Button onClick={onClose}>닫기</Modal.Button>
+        </Modal.ButtonContainer>
+      </Modal.Footer>
     </Modal>
   );
 }

@@ -5,6 +5,7 @@ import CategoryFilter from "./components/CategoryFilter";
 import Header from "./components/Header";
 import RestaurantDetailModal from "./components/RestaurantDetailModal";
 import RestaurantList from "./components/RestaurantList";
+// import AddRestaurantModal from "./components/AddRestaurantModal";
 import { restaurants } from "./restaurantData";
 
 function App() {
