@@ -9,6 +9,7 @@ import ButtonContainer from "./ButtonContainer";
 
 import useBodyOverflowHidden from "./hooks/useBodyOverflowHidden";
 import useKeyDown from "./hooks/useKeyDown";
+import { ModalContext } from "./hooks/useModal";
 
 function Modal({ open, onClose, children }) {
   useKeyDown("Escape", onClose);
@@ -17,11 +18,13 @@ function Modal({ open, onClose, children }) {
   if (!open) return null;
 
   return createPortal(
-    <div className="modal modal--open">
-      <div className="modal-backdrop" onClick={onClose}></div>
+    <ModalContext.Provider value={{ open, onClose }}>
+      <div className="modal modal--open">
+        <div className="modal-backdrop" onClick={onClose}></div>
 
-      <div className="modal-container">{children}</div>
-    </div>,
+        <div className="modal-container">{children}</div>
+      </div>
+    </ModalContext.Provider>,
     document.body
   );
 }

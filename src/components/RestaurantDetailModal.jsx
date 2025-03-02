@@ -20,7 +20,7 @@ function RestaurantDetailModal({ selectedRestaurant, onClose, open }) {
 
       <Modal.Footer>
         <Modal.ButtonContainer>
-          <Modal.Button onClick={onClose}>닫기</Modal.Button>
+          <Modal.Button>닫기</Modal.Button>
         </Modal.ButtonContainer>
       </Modal.Footer>
     </Modal>
