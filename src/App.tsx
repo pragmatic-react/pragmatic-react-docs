@@ -1,23 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 
-import db from '../db.json';
 import RestaurantList from './components/List/RestaurantList';
-import { ModalProvider } from './components/Modal/ModalProvider';
 import Header from './components/Header/Header';
+import { useRestaurants } from './hooks/useRestaurants';
+
 function App() {
-  const { restaurants } = db;
+  const { restaurants, isLoading, error, fetchRestaurants, addRestaurant } = useRestaurants();
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, [fetchRestaurants]);
 
   return (
     <>
-      <ModalProvider>
-        <div>
-          <Header />
-          <main>
+      <div>
+        <Header onAddRestaurant={addRestaurant} />
+        <main>
+          {isLoading ? (
+            <div className='flex min-h-[200px] items-center justify-center'>
+              <p className='text-gray-600'>로딩 중...</p>
+            </div>
+          ) : error ? (
+            <p className='p-4 text-red-500'>{error.message}</p>
+          ) : (
             <RestaurantList restaurants={restaurants} />
-          </main>
-        </div>
-      </ModalProvider>
+          )}
+        </main>
+      </div>
       <div id='modal-root' />
     </>
   );

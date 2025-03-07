@@ -1,16 +1,25 @@
 import React from 'react';
 import Modal from './Modal';
+import { Restaurant } from '../../interface/restaurant';
 
 function CreateRestaurantModal({
   isOpen,
   closeModal,
+  onAddRestaurant,
 }: {
   isOpen: boolean;
   closeModal: () => void;
+  onAddRestaurant: (restaurant: Omit<Restaurant, 'id'>) => void;
 }) {
   const onCreateRestaurant = () => {
-    // TODO: 음식점 추가 기능 구현
-    console.log('submit');
+    // TODO: 음식점 데이터를 받아서 생성할 수 있게 구현
+    onAddRestaurant({
+      name: '맷돌 순두부 삼성점',
+      address: '서울특별시 강남구 태스트길 123길 123 테스트빌딩 123층',
+      phone: '02-123-123',
+      category: '한식',
+      description: '푸짐한 양에 국물이 일품인 순두부',
+    });
   };
 
   const onCancel = () => {
