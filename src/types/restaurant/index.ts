@@ -11,3 +11,5 @@ export interface Restaurant {
   distance: number;
   link: string;
 }
+
+export type NewRestaurant = Omit<Restaurant, 'id' | 'is_favorite'>;
