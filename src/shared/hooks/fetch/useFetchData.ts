@@ -1,9 +1,19 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { getCachedData, hasCache, setCachedData } from './cache';
+import {
+  getCachedData,
+  hasCache,
+  refetchData,
+  registerFetchFunction,
+  resetCache,
+  setCachedData,
+  unregisterFetchFunction,
+} from '@shared/utils';
+
 import { FetchState, useFetchReducer } from './useFetchReducer';
 
 const promiseCache = new Map<string, Promise<any>>();
+const isFetchingGlobal = new Set<string>();
 
 type UseFetchDataOptions<Data, Params = void, T extends boolean = false> = {
   key: string;
@@ -19,9 +29,10 @@ type SuspenseResult<Data> = {
   isSuccess: true;
   isError: false;
   refetch: () => void;
+  reset: () => void;
 };
 
-type NonSuspenseResult<Data> = FetchState<Data> & { refetch: () => void };
+type NonSuspenseResult<Data> = FetchState<Data> & { refetch: () => void; reset: () => void };
 
 export const useFetchData = <Data, Params = void, S extends boolean = false>({
   key,
@@ -31,6 +42,11 @@ export const useFetchData = <Data, Params = void, S extends boolean = false>({
   shouldCache = true,
   suspense = false as S,
 }: UseFetchDataOptions<Data, Params, S>): S extends true ? SuspenseResult<Data> : NonSuspenseResult<Data> => {
+  useEffect(() => {
+    registerFetchFunction(key, () => fetchFunction());
+    return () => unregisterFetchFunction(key);
+  }, [key, fetchFunction]);
+
   if (suspense) {
     if (hasCache(key)) {
       return {
@@ -38,19 +54,23 @@ export const useFetchData = <Data, Params = void, S extends boolean = false>({
         isPending: false,
         isSuccess: true,
         isError: false,
-        refetch: () => {},
+        refetch: () => refetchData(key),
+        reset: () => resetCache(key),
       } as SuspenseResult<Data>;
     }
 
-    if (!promiseCache.has(key)) {
+    if (!promiseCache.has(key) && !isFetchingGlobal.has(key)) {
+      isFetchingGlobal.add(key); // ✅ 전역 중복 요청 방지
       const promise = fetchFunction()
         .then((data: Data) => {
           setCachedData(key, data);
           promiseCache.delete(key);
+          isFetchingGlobal.delete(key);
           return data;
         })
         .catch((error) => {
           promiseCache.delete(key);
+          isFetchingGlobal.delete(key);
           throw error;
         });
 
@@ -125,5 +145,7 @@ export const useFetchData = <Data, Params = void, S extends boolean = false>({
     };
   }, [enabled, refetchInterval, key, fetchData]);
 
-  return { ...state, refetch: fetchData } as unknown as S extends true ? never : NonSuspenseResult<Data>;
+  return { ...state, refetch: () => refetchData(key), reset: () => resetCache(key) } as unknown as S extends true
+    ? never
+    : NonSuspenseResult<Data>;
 };

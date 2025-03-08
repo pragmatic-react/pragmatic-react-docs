@@ -1,4 +1,2 @@
-export * from './cache';
-export * from './useFetchData';
-export * from './useFetchReducer';
+export * from './fetch';
 export * from './useModalState';
