@@ -1,4 +1,4 @@
-import React from 'react';
+import { MouseEventHandler } from 'react';
 
 import { Category } from '@entities/restaurant';
 
@@ -19,14 +19,26 @@ type Props = {
   setCategory: (category: Category | null) => void;
 };
 
-export const CategorySelect = ({ setCategory, category }: Props) => {
+export const CategorySelect = ({ category, setCategory }: Props) => {
+  const handleClick: MouseEventHandler<HTMLSelectElement> = (e) => {
+    const value = e.currentTarget.value;
+
+    if (value === '전체') {
+      setCategory(null);
+      return;
+    }
+
+    setCategory(value as Category);
+  };
+
   return (
     <Select
       id="category-filter"
       className="restaurant-filter"
+      value={category ?? '전체'}
       aria-label="음식점 카테고리 필터"
       options={CATEGORIES}
-      value={category ?? '전체'}
+      onClick={handleClick}
     />
   );
 };
