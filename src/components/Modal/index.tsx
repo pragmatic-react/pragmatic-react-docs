@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import Title from "./Title";
@@ -11,7 +12,13 @@ import useBodyOverflowHidden from "./hooks/useBodyOverflowHidden";
 import useKeyDown from "./hooks/useKeyDown";
 import { ModalContext } from "./hooks/useModal";
 
-function Modal({ open, onClose, children }) {
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}
+
+function Modal({ open, onClose, children }: ModalProps) {
   useKeyDown("Escape", onClose);
   useBodyOverflowHidden();
 

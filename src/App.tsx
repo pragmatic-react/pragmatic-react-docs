@@ -1,22 +1,27 @@
 import { useState } from "react";
 import "./App.css";
 
-import CategoryFilter from "./components/CategoryFilter";
-import Header from "./components/Header";
-import RestaurantDetailModal from "./components/RestaurantDetailModal";
-import RestaurantList from "./components/RestaurantList";
 // import AddRestaurantModal from "./components/AddRestaurantModal";
 import { restaurants } from "./restaurantData";
+import Header from "./components/Header";
+import CategoryFilter from "./components/CategoryFilter";
+import { CategorySelectList, Restaurant } from "./types/restaurant";
+import RestaurantList from "./components/RestaurantList";
+import RestaurantDetailModal from "./components/RestaurantDetailModal";
 
 function App() {
-  const [category, setCategory] = useState("전체");
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategorySelectList>("전체");
+  const [selectedRestaurant, setSelectedRestaurant] =
+    useState<Restaurant | null>(null);
   const filteredRestaurants =
-    category === "전체"
+    selectedCategory === "전체"
       ? restaurants
-      : restaurants.filter((restaurant) => restaurant.category === category);
+      : restaurants.filter(
+          (restaurant) => restaurant.category === selectedCategory
+        );
 
-  const handleRestaurantClick = (restaurant) => {
+  const handleRestaurantClick = (restaurant: Restaurant) => {
     setSelectedRestaurant(restaurant);
   };
 
@@ -29,7 +34,10 @@ function App() {
       <Header />
 
       <main>
-        <CategoryFilter category={category} onChangeCategory={setCategory} />
+        <CategoryFilter
+          selectedCategory={selectedCategory}
+          onChangeCategory={setSelectedCategory}
+        />
 
         <RestaurantList
           restaurants={filteredRestaurants}

@@ -1,4 +1,6 @@
-const CATEGORY_ICON = {
+import { Category } from "../types/restaurant";
+
+const CATEGORY_ICON: Record<Category, string> = {
   한식: "category-korean.png",
   중식: "category-chinese.png",
   일식: "category-japanese.png",
@@ -7,7 +9,17 @@ const CATEGORY_ICON = {
   기타: "category-etc.png",
 };
 
-function RestaurantList({ restaurants, handleRestaurantClick }) {
+import { Restaurant } from "../types/restaurant";
+
+interface RestaurantListProps {
+  restaurants: Restaurant[];
+  handleRestaurantClick: (restaurant: Restaurant) => void;
+}
+
+function RestaurantList({
+  restaurants,
+  handleRestaurantClick,
+}: RestaurantListProps) {
   return (
     <section className="restaurant-list-container">
       <ul className="restaurant-list">
