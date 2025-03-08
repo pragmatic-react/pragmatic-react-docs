@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { AppHeader } from '@widgets/layout';
 import { RestaurantDetailDrawer, RestaurantList } from '@widgets/restaurant';
@@ -6,14 +6,28 @@ import { RestaurantDetailDrawer, RestaurantList } from '@widgets/restaurant';
 import { ModalProvider } from '@features/modal';
 import { CategorySelect } from '@features/restaurant';
 
-import { Category, Restaurant } from '@entities/restaurant';
+import { Category, Restaurant, fetchRestaurantData } from '@entities/restaurant';
 
-import { RestaurantSkeleton } from '@shared/ui';
+import { useFetchData, useModalState } from '@shared/hooks';
 
 export const MainPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
 
+  const { data, isPending, refetch } = useFetchData({
+    fetchKey: ['restaurant-list', category],
+    fetchFunction: async () => {
+      const params = category ? { category } : undefined;
+      const data = await fetchRestaurantData(params);
+      return data;
+    },
+  });
   const [selected, setSelected] = useState<Restaurant | null>(null);
+  const { openModal } = useModalState();
+
+  const handleCardClick = (restaurant: Restaurant) => () => {
+    setSelected(restaurant);
+    openModal();
+  };
 
   return (
     <div>
@@ -26,9 +40,7 @@ export const MainPage = () => {
 
         <section>
           <ModalProvider>
-            <Suspense fallback={<RestaurantSkeleton />}>
-              <RestaurantList setSelected={setSelected} category={category} />
-            </Suspense>
+            <RestaurantList data={data ?? []} isPending={isPending} handleCardClick={handleCardClick} />
 
             <RestaurantDetailDrawer selected={selected} />
           </ModalProvider>
