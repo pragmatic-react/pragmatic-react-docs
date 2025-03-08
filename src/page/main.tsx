@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 
 import { AppHeader } from '@widgets/layout';
 import { RestaurantDetailDrawer, RestaurantList } from '@widgets/restaurant';
 
-import { ModalProvider, useModal } from '@features/modal';
+import { ModalProvider } from '@features/modal';
 import { CategorySelect } from '@features/restaurant';
 
 import { Category, Restaurant } from '@entities/restaurant';
+
+import { RestaurantSkeleton } from '@shared/ui';
 
 export const MainPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
@@ -24,7 +26,9 @@ export const MainPage = () => {
 
         <section>
           <ModalProvider>
-            <RestaurantList setSelected={setSelected} category={category} />
+            <Suspense fallback={<RestaurantSkeleton />}>
+              <RestaurantList setSelected={setSelected} category={category} />
+            </Suspense>
 
             <RestaurantDetailDrawer selected={selected} />
           </ModalProvider>

@@ -13,6 +13,7 @@ export const RestaurantList = ({ category, setSelected }: Props) => {
       const data = await fetchRestaurantData({ category: category ?? undefined });
       return data;
     },
+    suspense: true,
   });
 
   const handleCardClick = (restaurant: Restaurant) => () => {
