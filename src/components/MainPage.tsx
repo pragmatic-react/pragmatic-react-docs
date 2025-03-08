@@ -1,9 +1,12 @@
 import Restaurants from "./Restaurants";
 
-const MainPage = () => {
+const MainPage = ({ addModalOpen, setAddModalOpen }) => {
   return (
     <main>
-      <Restaurants />
+      <Restaurants
+        addModalOpen={addModalOpen}
+        setAddModalOpen={setAddModalOpen}
+      />
     </main>
   );
 };
