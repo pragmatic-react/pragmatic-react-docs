@@ -1,15 +1,14 @@
 import { useState } from "react";
 import useRestaurants from "../../hooks/useRestaurants";
 import { Restaurant as RestaurantType } from "../../models";
-import RestaurantModal, { RestaurantModalData } from "./RestaurantInfoModal";
+import RestaurantInfoModal, {
+  RestaurantModalData,
+} from "./RestaurantInfoModal";
 import RestaurantList from "./RestaurantList";
 import Section from "../../UI/Section";
-import AddRestaurantModal from "./AddRestaurantModal";
 
-const RestaurantSection = ({ addModalOpen, setAddModalOpen }) => {
-  const { restaurants, addRestaurant } = useRestaurants();
-
-  // todo : 모달 상태 관리
+const RestaurantSection = () => {
+  const { restaurants } = useRestaurants();
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false);
   const [modalData, setModalData] = useState<RestaurantModalData>({
     name: "",
@@ -34,15 +33,11 @@ const RestaurantSection = ({ addModalOpen, setAddModalOpen }) => {
         data={restaurants}
         openRestaurantModal={openRestaurantInfoModal}
       />
-      <RestaurantModal
+      <RestaurantInfoModal
+        title={modalData.name}
         isOpen={infoModalOpen}
-        restaurant={modalData}
+        description={modalData.description}
         onClose={onCloseRestaurantModal}
-      />
-      <AddRestaurantModal
-        isOpen={addModalOpen}
-        onClose={() => setAddModalOpen(false)}
-        addRestaurant={addRestaurant}
       />
     </Section>
   );

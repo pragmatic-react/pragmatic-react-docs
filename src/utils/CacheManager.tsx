@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
 
 class CacheManager {
   private cache: Map<string, any> = new Map();
@@ -43,6 +43,7 @@ const CacheContext = createContext<CacheManager | undefined>(undefined);
 
 export const CacheProvider = ({ children }) => {
   const cacheManager = new CacheManager();
+  console.log("cacheManager", cacheManager);
 
   return (
     <CacheContext.Provider value={cacheManager}>

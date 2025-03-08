@@ -22,7 +22,11 @@ const useRestaurants = () => {
   }, [data]);
 
   const addRestaurant = async (restaurant: RestaurantSubmitType) => {
-    postData(restaurant).then(() => getData());
+    postData(restaurant)
+      .then(() => getData({}, true))
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   return {

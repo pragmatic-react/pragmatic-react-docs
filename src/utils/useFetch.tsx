@@ -5,14 +5,19 @@ import https from "./https";
 const useFetch = <T,>(
   url: string,
   method: string = "GET"
-): [T | null, boolean, string | null, (bodyData?: object) => Promise<void>] => {
+): [
+  T | null,
+  boolean,
+  string | null,
+  (bodyData?: object, isRefetch?: boolean) => Promise<void>
+] => {
   const cacheManager = useCacheManager();
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(
-    async (bodyData: object = {}) => {
+    async (bodyData: object = {}, isRefetch = false) => {
       setLoading(true);
       setError(null);
 
@@ -21,7 +26,7 @@ const useFetch = <T,>(
 
         if (method === "GET") {
           const cachedData = cacheManager.getCache<T>(url);
-          if (cachedData) {
+          if (cachedData && !isRefetch) {
             setData(cachedData);
             return;
           }
@@ -29,7 +34,6 @@ const useFetch = <T,>(
           cacheManager.setCache(url, response);
         } else if (method === "POST") {
           response = await https.post<T>(url, bodyData);
-          cacheManager.removeCache(url);
         } else {
           throw new Error("지원하지 않는 HTTP 메서드입니다.");
         }
@@ -51,6 +55,14 @@ const useFetch = <T,>(
       fetchData();
     }
   }, [url, method]);
+
+  useEffect(() => {
+    cacheManager.subscribe(`${url}`, (cachedData: T | undefined) => {
+      if (cachedData) {
+        setData(cachedData); // 캐시가 업데이트되면 그 값을 가져옴
+      }
+    });
+  }, [url]);
 
   return [data, loading, error, fetchData];
 };
