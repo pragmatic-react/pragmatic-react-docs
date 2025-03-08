@@ -1,4 +1,26 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef } from 'react';
+
+interface FetchState<Data> {
+  data?: Data;
+  isPending: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+}
+
+type FetchAction<Data> = { type: 'FETCH_START' } | { type: 'FETCH_SUCCESS'; payload: Data } | { type: 'FETCH_ERROR' };
+
+const fetchReducer = <Data>(state: FetchState<Data>, action: FetchAction<Data>): FetchState<Data> => {
+  switch (action.type) {
+    case 'FETCH_START':
+      return { ...state, isPending: true, isError: false, isSuccess: false };
+    case 'FETCH_SUCCESS':
+      return { data: action.payload, isPending: false, isSuccess: true, isError: false };
+    case 'FETCH_ERROR':
+      return { ...state, isPending: false, isError: true, isSuccess: false };
+    default:
+      return state;
+  }
+};
 
 export const useFetchData = <Data, Params = void>({
   fetchFunction,
@@ -9,46 +31,47 @@ export const useFetchData = <Data, Params = void>({
   enabled?: boolean;
   refetchInterval?: number;
 }) => {
-  const [data, setData] = useState<Data | undefined>(undefined);
-  const [isPending, setIsPending] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [state, dispatch] = useReducer(fetchReducer<Data>, {
+    data: undefined,
+    isPending: false,
+    isSuccess: false,
+    isError: false,
+  });
 
-  const fetchData = useCallback(async () => {
-    setIsPending(true);
-    setIsError(false);
-    setIsSuccess(false);
-
-    try {
-      const result = await fetchFunction();
-      setData(result);
-      setIsSuccess(true);
-    } catch (error) {
-      setIsError(true);
-    } finally {
-      setIsPending(false);
-    }
-  }, [fetchFunction]);
-
+  const fetchFunctionRef = useRef(fetchFunction);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(
-    function handleFetchDataEffect() {
-      if (!enabled) return;
+  useEffect(() => {
+    fetchFunctionRef.current = fetchFunction;
+  }, [fetchFunction]);
 
-      fetchData();
+  const fetchData = useCallback(async () => {
+    dispatch({ type: 'FETCH_START' });
 
-      if (refetchInterval) {
-        intervalRef.current = setInterval(fetchData, refetchInterval);
-      }
+    try {
+      const result = await fetchFunctionRef.current();
+      dispatch({ type: 'FETCH_SUCCESS', payload: result });
+    } catch (error) {
+      dispatch({ type: 'FETCH_ERROR' });
+    }
+  }, []);
 
-      return () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
+  useEffect(() => {
+    if (!enabled) return;
+
+    fetchData();
+
+    if (refetchInterval) {
+      intervalRef.current = setInterval(fetchData, refetchInterval);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
         intervalRef.current = null;
-      };
-    },
-    [enabled, refetchInterval, fetchData],
-  );
+      }
+    };
+  }, [enabled, refetchInterval, fetchData]);
 
-  return { data, isPending, isSuccess, isError, refetch: fetchData };
+  return { ...state, refetch: fetchData };
 };
