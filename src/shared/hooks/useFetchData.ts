@@ -1,27 +1,72 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { getCachedData, hasCache, setCachedData } from './cache';
-import { useFetchReducer } from './useFetchReducer';
+import { FetchState, useFetchReducer } from './useFetchReducer';
 
-export const useFetchData = <Data, Params = void>({
-  key,
-  fetchFunction,
-  enabled = true,
-  refetchInterval,
-  shouldCache = true,
-}: {
+const promiseCache = new Map<string, Promise<any>>();
+
+type UseFetchDataOptions<Data, Params = void, T extends boolean = false> = {
   key: string;
   fetchFunction: (params?: Params) => Promise<Data>;
   enabled?: boolean;
   refetchInterval?: number;
   shouldCache?: boolean;
-}) => {
+  suspense?: T;
+};
+type SuspenseResult<Data> = {
+  data: Data;
+  isPending: false;
+  isSuccess: true;
+  isError: false;
+  refetch: () => void;
+};
+
+type NonSuspenseResult<Data> = FetchState<Data> & { refetch: () => void };
+
+export const useFetchData = <Data, Params = void, S extends boolean = false>({
+  key,
+  fetchFunction,
+  enabled = true,
+  refetchInterval,
+  shouldCache = true,
+  suspense = false as S,
+}: UseFetchDataOptions<Data, Params, S>): S extends true ? SuspenseResult<Data> : NonSuspenseResult<Data> => {
+  if (suspense) {
+    if (hasCache(key)) {
+      return {
+        data: getCachedData<Data>(key) as Data,
+        isPending: false,
+        isSuccess: true,
+        isError: false,
+        refetch: () => {},
+      } as SuspenseResult<Data>;
+    }
+
+    if (!promiseCache.has(key)) {
+      const promise = fetchFunction()
+        .then((data: Data) => {
+          setCachedData(key, data);
+          promiseCache.delete(key);
+          return data;
+        })
+        .catch((error) => {
+          promiseCache.delete(key);
+          throw error;
+        });
+
+      promiseCache.set(key, promise);
+    }
+
+    throw promiseCache.get(key)!;
+  }
+
+  // 기존 방식 (Suspense 미사용)
   const initialData = shouldCache ? getCachedData<Data>(key) : undefined;
   const { state, dispatch } = useFetchReducer<Data>(initialData);
 
   const fetchFunctionRef = useRef(fetchFunction);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isFetchingRef = useRef(false); // 중복 요청 방지
+  const isFetchingRef = useRef(false);
 
   useEffect(() => {
     fetchFunctionRef.current = fetchFunction;
@@ -32,10 +77,9 @@ export const useFetchData = <Data, Params = void>({
     isFetchingRef.current = true;
 
     if (shouldCache && hasCache(key)) {
-      const cachedData = getCachedData<Data>(key);
-      dispatch({ type: 'FETCH_SUCCESS', payload: cachedData as Data });
+      const cachedData = getCachedData<Data>(key) as Data;
+      dispatch({ type: 'FETCH_SUCCESS', payload: cachedData });
 
-      // Stale-while-revalidate: 캐시된 데이터를 우선 제공하고, 백그라운드에서 최신 데이터 갱신
       fetchFunctionRef
         .current()
         .then((result) => {
@@ -52,7 +96,6 @@ export const useFetchData = <Data, Params = void>({
       return;
     }
 
-    // 새로운 데이터 요청
     dispatch({ type: 'FETCH_START' });
     try {
       const result = await fetchFunctionRef.current();
@@ -68,7 +111,7 @@ export const useFetchData = <Data, Params = void>({
   useEffect(() => {
     if (!enabled) return;
 
-    fetchData(); // 초기 데이터 패치 실행
+    fetchData();
 
     if (refetchInterval) {
       intervalRef.current = setInterval(fetchData, refetchInterval);
@@ -82,5 +125,5 @@ export const useFetchData = <Data, Params = void>({
     };
   }, [enabled, refetchInterval, key, fetchData]);
 
-  return { ...state, refetch: fetchData };
+  return { ...state, refetch: fetchData } as unknown as S extends true ? never : NonSuspenseResult<Data>;
 };
