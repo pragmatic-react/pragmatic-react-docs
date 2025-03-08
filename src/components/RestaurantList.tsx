@@ -1,4 +1,5 @@
-import { Category } from "../types/restaurant";
+import { useState } from "react";
+import { Category, CategorySelectList } from "../types/restaurant";
 
 const CATEGORY_ICON: Record<Category, string> = {
   한식: "category-korean.png",
@@ -10,45 +11,64 @@ const CATEGORY_ICON: Record<Category, string> = {
 };
 
 import { Restaurant } from "../types/restaurant";
-
-interface RestaurantListProps {
-  restaurants: Restaurant[];
-  handleRestaurantClick: (restaurant: Restaurant) => void;
-}
+import RestaurantDetailModal from "./RestaurantDetailModal";
+import { useRestaurant } from "../api/useRestaurant";
 
 function RestaurantList({
-  restaurants,
-  handleRestaurantClick,
-}: RestaurantListProps) {
-  return (
-    <section className="restaurant-list-container">
-      <ul className="restaurant-list">
-        {restaurants.map((restaurant) => (
-          <li
-            key={restaurant.id}
-            className="restaurant"
-            onClick={() => handleRestaurantClick(restaurant)}
-          >
-            <div className="restaurant__category">
-              <img
-                src={`./src/assets/${CATEGORY_ICON[restaurant.category]}`}
-                alt={restaurant.category}
-                className="category-icon"
-              />
-            </div>
+  selectedCategory,
+}: {
+  selectedCategory: CategorySelectList;
+}) {
+  const { restaurants } = useRestaurant();
+  const [selectedRestaurant, setSelectedRestaurant] =
+    useState<Restaurant | null>(null);
 
-            <div className="restaurant__info">
-              <h3 className="restaurant__name text-subtitle">
-                {restaurant.name}
-              </h3>
-              <p className="restaurant__description text-body">
-                {restaurant.description}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
+  const filteredRestaurants =
+    selectedCategory === "전체"
+      ? restaurants
+      : restaurants.filter(
+          (restaurant) => restaurant.category === selectedCategory
+        );
+
+  return (
+    <>
+      <section className="restaurant-list-container">
+        <ul className="restaurant-list">
+          {filteredRestaurants.map((restaurant) => (
+            <li
+              key={restaurant.id}
+              className="restaurant"
+              onClick={() => setSelectedRestaurant(restaurant)}
+            >
+              <div className="restaurant__category">
+                <img
+                  src={`./src/assets/${CATEGORY_ICON[restaurant.category]}`}
+                  alt={restaurant.category}
+                  className="category-icon"
+                />
+              </div>
+
+              <div className="restaurant__info">
+                <h3 className="restaurant__name text-subtitle">
+                  {restaurant.name}
+                </h3>
+                <p className="restaurant__description text-body">
+                  {restaurant.description}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {selectedRestaurant && (
+        <RestaurantDetailModal
+          selectedRestaurant={selectedRestaurant}
+          open={!!selectedRestaurant}
+          onClose={() => setSelectedRestaurant(null)}
+        />
+      )}
+    </>
   );
 }
 export default RestaurantList;

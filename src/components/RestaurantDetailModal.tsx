@@ -1,6 +1,17 @@
+import { Restaurant } from "../types/restaurant";
 import Modal from "./Modal";
 
-function RestaurantDetailModal({ selectedRestaurant, onClose, open }) {
+interface RestaurantDetailModalProps {
+  selectedRestaurant: Restaurant | null;
+  onClose: () => void;
+  open: boolean;
+}
+
+function RestaurantDetailModal({
+  selectedRestaurant,
+  onClose,
+  open,
+}: RestaurantDetailModalProps) {
   if (!selectedRestaurant) return null;
 
   const { name, description } = selectedRestaurant;
