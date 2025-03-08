@@ -19,7 +19,7 @@ function RestaurantList({
 }: {
   selectedCategory: CategorySelectList;
 }) {
-  const { restaurants } = useRestaurant();
+  const { restaurants, isLoading, isError } = useRestaurant();
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
 
@@ -29,6 +29,9 @@ function RestaurantList({
       : restaurants.filter(
           (restaurant) => restaurant.category === selectedCategory
         );
+
+  if (isLoading) return <div>로딩중...</div>;
+  if (isError) return <div>에러가 발생했습니다. 다시 시도해주세요.</div>;
 
   return (
     <>
