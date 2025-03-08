@@ -1,14 +1,65 @@
-function AddRestaurantModal() {
+import { FormEvent, useState } from "react";
+import Modal from "./Modal";
+import { Category } from "../types/restaurant";
+import { useRestaurant } from "../context/useRestaurant";
+
+function AddRestaurantModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const [category, setCategory] = useState<Category | "">("");
+  const [name, setName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addNewRestaurant } = useRestaurant();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    if (!isFormValid) return;
+
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const description = formData.get("description") as string;
+
+    const newRestaurant = {
+      id: new Date().toISOString(),
+      category,
+      name,
+      description,
+    };
+
+    try {
+      addNewRestaurant(newRestaurant);
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // TODO: 추후 validation 로직 추가
+  const isFormValid = category !== "" && name !== "";
+
   return (
-    <div className="modal modal--open">
-      <div className="modal-backdrop"></div>
-      <div className="modal-container">
-        <h2 className="modal-title text-title">새로운 음식점</h2>
-        <form>
-          {/* <!-- 카테고리 --> */}
+    <Modal open={isOpen} onClose={onClose}>
+      <Modal.Header>
+        <Modal.Title>새로운 음식점</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <form onSubmit={handleSubmit}>
+          {/* // TODO: select 중복 개선 */}
           <div className="form-item form-item--required">
             <label htmlFor="category text-caption">카테고리</label>
-            <select name="category" id="category" required>
+            <select
+              name="category"
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value as Category)}
+              required
+            >
               <option value="">선택해 주세요</option>
               <option value="한식">한식</option>
               <option value="중식">중식</option>
@@ -18,36 +69,44 @@ function AddRestaurantModal() {
               <option value="기타">기타</option>
             </select>
           </div>
-
-          {/* <!-- 음식점 이름 --> */}
           <div className="form-item form-item--required">
             <label htmlFor="name text-caption">이름</label>
-            <input type="text" name="name" id="name" required />
+            <input
+              type="text"
+              name="name"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
           </div>
-
-          {/* <!-- 설명 --> */}
           <div className="form-item">
             <label htmlFor="description text-caption">설명</label>
             <textarea
               name="description"
               id="description"
-              cols="30"
-              rows="5"
+              cols={30}
+              rows={5}
             ></textarea>
             <span className="help-text text-caption">
               메뉴 등 추가 정보를 입력해 주세요.
             </span>
           </div>
 
-          {/* <!-- 추가 버튼 --> */}
-          <div className="button-container">
-            <button className="button button--primary text-caption">
-              추가하기
-            </button>
-          </div>
+          <Modal.Footer>
+            <Modal.ButtonContainer>
+              <Modal.Button
+                type="submit"
+                disabled={!isFormValid || isSubmitting}
+              >
+                {isSubmitting ? "추가 중..." : "추가하기"}
+              </Modal.Button>
+            </Modal.ButtonContainer>
+          </Modal.Footer>
         </form>
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 }
+
 export default AddRestaurantModal;

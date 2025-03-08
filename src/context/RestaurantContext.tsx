@@ -1,12 +1,11 @@
 import { createContext, useContext } from "react";
-
 import { Restaurant } from "../types/restaurant";
 
 interface RestaurantContextType {
   restaurants: Restaurant[];
   isLoading: boolean;
   isError: boolean;
-  refetch: () => void;
+  addNewRestaurant: (restaurant: Restaurant) => void;
 }
 
 const RestaurantContext = createContext<RestaurantContextType | undefined>(

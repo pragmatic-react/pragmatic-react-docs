@@ -1,33 +1,31 @@
-import { useState, useEffect, ReactNode, createContext } from "react";
-import { fetchRestaurants } from "./api/restaurant";
+import { createContext, ReactNode } from "react";
+import { useAddRestaurant } from "./hooks/useAddRestaurant";
+import { useRestaurants } from "./hooks/useRestaurants";
 import { Restaurant } from "./types/restaurant";
-import { RestaurantContext } from "./api/useRestaurant";
+
+interface RestaurantContextType {
+  restaurants: Restaurant[];
+  isLoading: boolean;
+  isError: boolean;
+  addNewRestaurant: (restaurant: Restaurant) => void;
+}
+
+export const RestaurantContext = createContext<
+  RestaurantContextType | undefined
+>(undefined);
 
 export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
-
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      setIsError(false);
-      const data = await fetchRestaurants();
-      setRestaurants(data);
-    } catch (error) {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { restaurants, isLoading, isError, setRestaurants } = useRestaurants();
+  const { addNewRestaurant } = useAddRestaurant(setRestaurants);
 
   return (
     <RestaurantContext.Provider
-      value={{ restaurants, isLoading, isError, refetch: fetchData }}
+      value={{
+        restaurants,
+        isLoading,
+        isError,
+        addNewRestaurant,
+      }}
     >
       {children}
     </RestaurantContext.Provider>

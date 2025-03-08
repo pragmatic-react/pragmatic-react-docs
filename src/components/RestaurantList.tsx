@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { Category, CategorySelectList } from "../types/restaurant";
-
 const CATEGORY_ICON: Record<Category, string> = {
   한식: "category-korean.png",
   중식: "category-chinese.png",
@@ -10,9 +7,12 @@ const CATEGORY_ICON: Record<Category, string> = {
   기타: "category-etc.png",
 };
 
+import { useState } from "react";
+import { Category, CategorySelectList } from "../types/restaurant";
+
 import { Restaurant } from "../types/restaurant";
 import RestaurantDetailModal from "./RestaurantDetailModal";
-import { useRestaurant } from "../api/useRestaurant";
+import { useRestaurant } from "../context/useRestaurant";
 
 function RestaurantList({
   selectedCategory,

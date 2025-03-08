@@ -31,7 +31,7 @@ function RestaurantDetailModal({
 
       <Modal.Footer>
         <Modal.ButtonContainer>
-          <Modal.Button>닫기</Modal.Button>
+          <Modal.Button onClick={onClose}>닫기</Modal.Button>
         </Modal.ButtonContainer>
       </Modal.Footer>
     </Modal>
