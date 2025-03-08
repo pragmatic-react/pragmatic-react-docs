@@ -12,18 +12,6 @@ export const MainPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
 
   const [selected, setSelected] = useState<Restaurant | null>(null);
-  const { isOpen, openModal } = useModal();
-
-  const handleCardClick = (restaurant: Restaurant) => () => {
-    setSelected(restaurant);
-    openModal();
-  };
-
-  useEffect(() => {
-    if (!isOpen) {
-      setSelected(null);
-    }
-  }, [isOpen]);
 
   return (
     <div>
@@ -36,7 +24,7 @@ export const MainPage = () => {
 
         <section>
           <ModalProvider>
-            <RestaurantList handleCardClick={handleCardClick} category={category} />
+            <RestaurantList setSelected={setSelected} category={category} />
 
             <RestaurantDetailDrawer selected={selected} />
           </ModalProvider>

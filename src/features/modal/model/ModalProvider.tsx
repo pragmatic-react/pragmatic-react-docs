@@ -1,4 +1,6 @@
-import { PropsWithChildren, ReactNode, createContext, useContext, useState } from 'react';
+import { PropsWithChildren, createContext, useContext } from 'react';
+
+import { useModalState } from '@shared/hooks';
 
 type ModalContextType = {
   isOpen: boolean;
@@ -9,15 +11,7 @@ type ModalContextType = {
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export const ModalProvider = ({ children }: PropsWithChildren) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
+  const { isOpen, openModal, closeModal } = useModalState();
 
   return <ModalContext.Provider value={{ isOpen, openModal, closeModal }}>{children}</ModalContext.Provider>;
 };
