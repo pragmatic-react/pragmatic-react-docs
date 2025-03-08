@@ -1,9 +1,9 @@
 import { useState, useReducer, useEffect } from "react";
 import RestaurantItem from "./components/restaurantItem";
 import RestaurantModal from "./components/restaurantModal";
-import { CategoryType } from "./components/restaurantItem";
 import RestaurantService from "./services/restaurantApi";
 import CreateRestaurant from "./components/createRestaurant";
+import { RestaurantCategoryType } from "./services/restaurantIType";
 
 interface ModalState {
   detail: boolean;
@@ -19,7 +19,7 @@ interface Restaurant {
   id: string;
   name: string;
   description: string;
-  category: CategoryType;
+  category: RestaurantCategoryType;
 }
 
 export default function Container() {
@@ -61,8 +61,12 @@ export default function Container() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   const fetchRestaurants = async () => {
-    const response = await RestaurantService.ReadInfoList({});
-    setRestaurants(response.data);
+    try {
+      const response = await RestaurantService.ReadInfoList({});
+      setRestaurants(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
