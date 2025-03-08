@@ -1,4 +1,14 @@
-function CategoryFilter({ category, onChangeCategory }) {
+import { CategorySelectList } from "../types/restaurant";
+
+interface CategoryFilterProps {
+  selectedCategory: string;
+  onChangeCategory: (category: CategorySelectList) => void;
+}
+
+function CategoryFilter({
+  selectedCategory,
+  onChangeCategory,
+}: CategoryFilterProps) {
   return (
     <section className="restaurant-filter-container">
       <select
@@ -6,8 +16,8 @@ function CategoryFilter({ category, onChangeCategory }) {
         id="category-filter"
         className="restaurant-filter"
         aria-label="음식점 카테고리 필터"
-        value={category}
-        onChange={(e) => onChangeCategory(e.target.value)}
+        value={selectedCategory}
+        onChange={(e) => onChangeCategory(e.target.value as CategorySelectList)}
       >
         <option value="전체">전체</option>
         <option value="한식">한식</option>

@@ -1,6 +1,11 @@
 import { createContext, useContext } from "react";
 
-export const ModalContext = createContext(null);
+interface ModalContextType {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const ModalContext = createContext<ModalContextType | null>(null);
 
 const useModal = () => {
   const context = useContext(ModalContext);
