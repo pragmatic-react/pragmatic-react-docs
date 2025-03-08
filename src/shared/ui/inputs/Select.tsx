@@ -1,10 +1,12 @@
 import React from 'react';
 
-export type SelectOption = { label: string; value: React.OptionHTMLAttributes<HTMLOptionElement>['value'] };
+export type SelectOption<Value extends HTMLSelectElement['value']> = { label: string; value: Value };
 
-type Props = React.ComponentPropsWithRef<'select'> & { options: SelectOption[] };
+type Props<Value extends HTMLSelectElement['value']> = React.ComponentPropsWithRef<'select'> & {
+  options: SelectOption<Value>[];
+};
 
-export const Select = ({ options, ...props }: Props) => {
+export const Select = <Value extends HTMLSelectElement['value']>({ options, ...props }: Props<Value>) => {
   return (
     <select {...props}>
       {options.map(({ label, value }) => (
