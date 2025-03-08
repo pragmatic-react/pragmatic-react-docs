@@ -44,7 +44,7 @@ function AddRestaurantModal({
   const isFormValid = category !== "" && name !== "";
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <Modal.Header>
         <Modal.Title>새로운 음식점</Modal.Title>
       </Modal.Header>

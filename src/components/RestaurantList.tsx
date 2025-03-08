@@ -68,7 +68,7 @@ function RestaurantList({
       {selectedRestaurant && (
         <RestaurantDetailModal
           selectedRestaurant={selectedRestaurant}
-          open={!!selectedRestaurant}
+          isOpen={!!selectedRestaurant}
           onClose={() => setSelectedRestaurant(null)}
         />
       )}

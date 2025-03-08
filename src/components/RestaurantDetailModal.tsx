@@ -4,19 +4,19 @@ import Modal from "./Modal";
 interface RestaurantDetailModalProps {
   selectedRestaurant: Restaurant | null;
   onClose: () => void;
-  open: boolean;
+  isOpen: boolean;
 }
 
 function RestaurantDetailModal({
   selectedRestaurant,
   onClose,
-  open,
+  isOpen,
 }: RestaurantDetailModalProps) {
   if (!selectedRestaurant) return null;
 
   const { name, description } = selectedRestaurant;
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <Modal.Header>
         <Modal.Title>{name}</Modal.Title>
       </Modal.Header>
