@@ -2,13 +2,35 @@ import { useState, useReducer } from "react";
 import RestaurantItem from "./components/restaurantItem";
 import RestaurantModal from "./components/restaurantModal";
 import { restaurants } from "../db.json";
+import { Category } from "./components/restaurantItem";
+
+interface ModalState {
+  detail: boolean;
+  create: boolean;
+}
+
+interface ModalAction {
+  type: keyof ModalState;
+  isOpen: boolean;
+}
+
+interface Restaurant {
+  id: string;
+  name: string;
+  description: string;
+  category: Category;
+}
 
 export default function Container() {
   /* ---------------------------------- Modal --------------------------------- */
   const [isOpenModal, setIsOpenModal] = useReducer(
-    (pre, next) => {
+    (pre: ModalState, next: ModalAction) => {
       const { type, isOpen } = next;
 
+      // 이미 열려있는 모달일 경우 무시
+      if (pre[type] === isOpen) return pre;
+
+      // 모달 상태 업데이트
       return { ...pre, [type]: isOpen };
     },
     {
@@ -17,20 +39,19 @@ export default function Container() {
     }
   );
 
-  const toggleModal = (type, isOpen) => () => {
+  const toggleModal = (type: keyof ModalState, isOpen: boolean) => () => {
     setIsOpenModal({ type, isOpen });
   };
 
   /* --------------------------- Selected restaurant -------------------------- */
-  const [selectedRestaurant, setSelectedRestaurant] = useState({
-    id: 0,
-    categorySrc: "",
-    categoryAlt: "",
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant>({
+    id: "",
     name: "",
     description: "",
+    category: { id: "", name: "" },
   });
 
-  function handleClickRestaurantItem(restaurantItem) {
+  function handleClickRestaurantItem(restaurantItem: Restaurant) {
     toggleModal("detail", true)();
     setSelectedRestaurant(restaurantItem);
   }
@@ -75,9 +96,7 @@ export default function Container() {
             {restaurants.map((item) => (
               <RestaurantItem
                 key={crypto.randomUUID()}
-                category={item.category}
-                name={item.name}
-                description={item.description}
+                data={item}
                 onClick={() => handleClickRestaurantItem(item)}
               />
             ))}
@@ -88,8 +107,7 @@ export default function Container() {
       <aside>
         {/* 음식점 정보 모달 */}
         <RestaurantModal
-          title={selectedRestaurant.name}
-          description={selectedRestaurant.description}
+          data={selectedRestaurant}
           isOpen={isOpenModal.detail}
           onClose={toggleModal("detail", false)}
         >
@@ -103,7 +121,7 @@ export default function Container() {
 
         {/* 음식점 추가 모달 */}
         <RestaurantModal
-          title="새로운 음식점"
+          data={{ name: "새로운 음식점" }}
           isOpen={isOpenModal.create}
           onClose={toggleModal("create", false)}
         >
