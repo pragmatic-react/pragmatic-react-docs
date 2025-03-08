@@ -2,40 +2,48 @@ import { useState, useCallback } from 'react';
 import { Restaurant } from '../interface/restaurant';
 import { restaurantAPI } from '../api/restaurants';
 
-export function useRestaurants() {
+export const useRestaurants = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [isFetching, setIsFetching] = useState(false); // 데이터 페칭용 상태
+  const [isAdding, setIsAdding] = useState(false); // 데이터 추가용 상태
+  const [fetchingError, setFetchingError] = useState<Error | null>(null);
+  const [addingError, setAddingError] = useState<Error | null>(null);
 
   const fetchRestaurants = useCallback(async () => {
+    setIsFetching(true);
     try {
-      setIsLoading(true);
-      setError(null);
       const { data } = await restaurantAPI.getRestaurants();
-      setRestaurants(data.restaurants);
+      setRestaurants(data);
+      setFetchingError(null);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('알 수 없는 에러가 발생했습니다'));
-      setRestaurants([]);
+      setFetchingError(err instanceof Error ? err : new Error('알 수 없는 에러가 발생했습니다.'));
     } finally {
-      setIsLoading(false);
+      setIsFetching(false);
     }
   }, []);
 
-  const addRestaurant = useCallback(async (restaurant: Omit<Restaurant, 'id'>) => {
+  const addRestaurantAction = useCallback(async (restaurant: Omit<Restaurant, 'id'>) => {
+    setIsAdding(true);
     try {
       const { data } = await restaurantAPI.postRestaurant(restaurant);
-      setRestaurants((prev) => [...prev, data.restaurant]);
+      setRestaurants((prev) => [...prev, data]);
+      setAddingError(null);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('알 수 없는 에러가 발생했습니다'));
-      throw err;
+      setAddingError(
+        err instanceof Error ? err : new Error('레스토랑 추가 중 에러가 발생했습니다.'),
+      );
+    } finally {
+      setIsAdding(false);
     }
   }, []);
 
   return {
     restaurants,
-    isLoading,
-    error,
+    isFetching,
+    isAdding,
+    fetchingError,
+    addingError,
     fetchRestaurants,
-    addRestaurant,
+    addRestaurantAction,
   };
-}
+};

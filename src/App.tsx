@@ -6,7 +6,15 @@ import Header from './components/Header/Header';
 import { useRestaurants } from './hooks/useRestaurants';
 
 function App() {
-  const { restaurants, isLoading, error, fetchRestaurants, addRestaurant } = useRestaurants();
+  const {
+    restaurants,
+    isFetching,
+    isAdding,
+    fetchingError,
+    addingError,
+    fetchRestaurants,
+    addRestaurantAction,
+  } = useRestaurants();
 
   useEffect(() => {
     fetchRestaurants();
@@ -15,16 +23,20 @@ function App() {
   return (
     <>
       <div>
-        <Header onAddRestaurant={addRestaurant} />
+        <Header onAddRestaurant={addRestaurantAction} isFetching={isAdding} />
         <main>
-          {isLoading ? (
-            <div className='flex min-h-[200px] items-center justify-center'>
-              <p className='text-gray-600'>로딩 중...</p>
-            </div>
-          ) : error ? (
-            <p className='p-4 text-red-500'>{error.message}</p>
+          {fetchingError ? (
+            <p className='p-4 text-red-500'>{fetchingError.message}</p>
           ) : (
-            <RestaurantList restaurants={restaurants} />
+            <>
+              {isFetching ? (
+                <div className='flex min-h-[200px] items-center justify-center'>
+                  <p className='text-gray-600'>로딩 중...</p>
+                </div>
+              ) : (
+                <RestaurantList restaurants={restaurants} />
+              )}
+            </>
           )}
         </main>
       </div>

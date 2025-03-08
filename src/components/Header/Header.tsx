@@ -5,8 +5,10 @@ import { Restaurant } from '../../interface/restaurant';
 
 function Header({
   onAddRestaurant,
+  isFetching,
 }: {
-  onAddRestaurant: (restaurant: Omit<Restaurant, 'id'>) => void;
+  onAddRestaurant: (restaurant: Omit<Restaurant, 'id'>) => Promise<void>;
+  isFetching: boolean;
 }) {
   const { openModal, closeModal, isOpen } = useModal();
 
@@ -24,6 +26,7 @@ function Header({
         isOpen={isOpen}
         closeModal={closeModal}
         onAddRestaurant={onAddRestaurant}
+        isFetching={isFetching}
       />
     </>
   );

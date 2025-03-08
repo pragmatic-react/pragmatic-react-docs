@@ -23,7 +23,7 @@ client.interceptors.request.use(
 client.interceptors.response.use(
   (response) => {
     // 응답 데이터 가공이 필요한 경우
-    return response.data;
+    return response;
   },
   (error) => {
     // 에러 응답 처리

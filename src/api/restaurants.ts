@@ -7,13 +7,8 @@ const API_ENDPOINTS = {
 } as const;
 
 // API 응답 타입
-interface GetRestaurantsResponse {
-  restaurants: Restaurant[];
-}
-
-interface CreateRestaurantResponse {
-  restaurant: Restaurant;
-}
+type GetRestaurantsResponse = Restaurant[];
+type CreateRestaurantResponse = Restaurant;
 
 export const restaurantAPI = {
   /** 레스토랑 목록 조회 */
