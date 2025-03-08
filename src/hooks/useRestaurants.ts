@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { fetchRestaurants } from "../api/restaurant";
-import { Restaurant } from "../types/restaurant";
+import { useRestaurantContext } from "../context/useRestaurantContext";
 
 export const useRestaurants = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
+  const {
+    isLoading,
+    isError,
+    setRestaurants,
+    setIsLoading,
+    setIsError,
+    restaurants,
+  } = useRestaurantContext();
 
   const fetchData = async () => {
     try {
@@ -24,5 +29,5 @@ export const useRestaurants = () => {
     fetchData();
   }, []);
 
-  return { restaurants, isLoading, isError, fetchData, setRestaurants };
+  return { restaurants, isLoading, isError };
 };

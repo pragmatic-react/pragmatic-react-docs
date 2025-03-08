@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import Modal from "./Modal";
 import { Category } from "../types/restaurant";
-import { useRestaurant } from "../context/useRestaurant";
+import { useAddRestaurant } from "../hooks/useAddRestaurant";
 
 function AddRestaurantModal({
   isOpen,
@@ -13,7 +13,7 @@ function AddRestaurantModal({
   const [category, setCategory] = useState<Category | "">("");
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addNewRestaurant } = useRestaurant();
+  const { addNewRestaurant } = useAddRestaurant();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     if (!isFormValid) return;

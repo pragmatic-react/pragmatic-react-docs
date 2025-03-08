@@ -1,12 +1,13 @@
 import { useContext } from "react";
+
 import { RestaurantContext } from "../RestaurantProvider";
 
-const useRestaurant = () => {
+export const useRestaurantContext = () => {
   const context = useContext(RestaurantContext);
   if (!context) {
-    throw new Error("useRestaurant must be used within a RestaurantProvider");
+    throw new Error(
+      "useRestaurantContext must be used within a RestaurantProvider"
+    );
   }
   return context;
 };
-
-export { useRestaurant };

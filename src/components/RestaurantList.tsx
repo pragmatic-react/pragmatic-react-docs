@@ -12,14 +12,14 @@ import { Category, CategorySelectList } from "../types/restaurant";
 
 import { Restaurant } from "../types/restaurant";
 import RestaurantDetailModal from "./RestaurantDetailModal";
-import { useRestaurant } from "../context/useRestaurant";
+import { useRestaurants } from "../hooks/useRestaurants";
 
 function RestaurantList({
   selectedCategory,
 }: {
   selectedCategory: CategorySelectList;
 }) {
-  const { restaurants, isLoading, isError } = useRestaurant();
+  const { restaurants, isLoading, isError } = useRestaurants();
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
 

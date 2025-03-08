@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { Restaurant } from "../types/restaurant";
 import { addRestaurant } from "../api/restaurant";
+import { useRestaurantContext } from "../context/useRestaurantContext";
 
-export const useAddRestaurant = (
-  setRestaurants: React.Dispatch<React.SetStateAction<Restaurant[]>>
-) => {
-  const [isError, setIsError] = useState<boolean>(false);
+export const useAddRestaurant = () => {
+  const { isError, setIsError, setErrorMessage, errorMessage, setRestaurants } =
+    useRestaurantContext();
 
   const addNewRestaurant = async (restaurant: Restaurant) => {
     try {
