@@ -1,7 +1,8 @@
 import { AppHeader } from '@widgets/layout';
 import { RestaurantList } from '@widgets/restaurant';
 
-import { CategorySelect } from '@features/listings';
+import { ModalProvider } from '@features/modal';
+import { CategorySelect } from '@features/restaurant';
 
 import './App.css';
 
@@ -16,7 +17,9 @@ function App() {
         </section>
 
         <section>
-          <RestaurantList />
+          <ModalProvider>
+            <RestaurantList />
+          </ModalProvider>
         </section>
       </main>
     </div>
