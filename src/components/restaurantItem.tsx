@@ -1,3 +1,5 @@
+import type { RestaurantItemType } from "../services/restaurantIType";
+
 const categorySrc = {
   한식: "./category-korean.png",
   중식: "./category-chinese.png",
@@ -7,14 +9,8 @@ const categorySrc = {
   기타: "./category-etc.png",
 } as const;
 
-export type Category = "한식" | "중식" | "일식" | "양식" | "아시안" | "기타";
-
 interface RestaurantItemProps {
-  data: {
-    category: Category;
-    name: string;
-    description: string;
-  };
+  data: RestaurantItemType;
   onClick: () => void;
 }
 
