@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { AddRestaurantData, CATEGORY_OPTIONS, addRestaurantData } from '@entities/restaurant';
 
 import { useMutation } from '@shared/hooks';
+import { useFetchContext } from '@shared/providers';
 import { Drawer } from '@shared/ui';
 
 type Props = {
@@ -24,11 +25,13 @@ const initialForm: Partial<AddRestaurantData['request']> = {
 
 export const AddRestaurantModal = ({ isOpen, onClose }: Props) => {
   const [form, setForm] = useState<Partial<AddRestaurantData['request']>>(initialForm);
+  const { triggerRefetch } = useFetchContext();
 
   const { mutate, isLoading } = useMutation({
     mutationFunction: addRestaurantData,
     onSuccess: () => {
       onClose();
+      triggerRefetch(['restaurant-list']);
     },
     onError: () => {
       alert('추가에 실패했습니다.');
