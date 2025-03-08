@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useFetchData = <Data, Params = void>({
   fetchFunction,
@@ -30,20 +30,21 @@ export const useFetchData = <Data, Params = void>({
     }
   }, [fetchFunction]);
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(
     function handleFetchDataEffect() {
       if (!enabled) return;
 
-      let intervalId: NodeJS.Timeout | null = null;
-
       fetchData();
 
       if (refetchInterval) {
-        intervalId = setInterval(fetchData, refetchInterval);
+        intervalRef.current = setInterval(fetchData, refetchInterval);
       }
 
       return () => {
-        if (intervalId) clearInterval(intervalId);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = null;
       };
     },
     [enabled, refetchInterval, fetchData],
