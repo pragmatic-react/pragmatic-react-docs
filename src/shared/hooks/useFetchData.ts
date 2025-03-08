@@ -29,30 +29,35 @@ export const useFetchData = <Data, Params = void>({
   fetchFunction,
   enabled = true,
   refetchInterval,
+  shouldCache = true,
 }: {
   key: string;
   fetchFunction: (params?: Params) => Promise<Data>;
   enabled?: boolean;
   refetchInterval?: number;
+  shouldCache?: boolean;
 }) => {
-  // 초기 캐싱된 데이터 불러오기
-  const initialData = globalCache.get(key);
+  const initialData = shouldCache ? globalCache.get(key) : undefined;
   const [state, dispatch] = useReducer(fetchReducer<Data>, {
     data: initialData,
-    isPending: false,
+    isPending: !initialData,
     isSuccess: !!initialData,
     isError: false,
   });
 
   const fetchFunctionRef = useRef(fetchFunction);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isFetchingRef = useRef(false); // 중복 요청 방지
 
   useEffect(() => {
     fetchFunctionRef.current = fetchFunction;
   }, [fetchFunction]);
 
   const fetchData = useCallback(async () => {
-    if (globalCache.has(key)) {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    if (shouldCache && globalCache.has(key)) {
       const cachedData = globalCache.get(key);
       dispatch({ type: 'FETCH_SUCCESS', payload: cachedData });
 
@@ -60,11 +65,14 @@ export const useFetchData = <Data, Params = void>({
       fetchFunctionRef
         .current()
         .then((result) => {
-          globalCache.set(key, result);
+          if (shouldCache) globalCache.set(key, result);
           dispatch({ type: 'FETCH_SUCCESS', payload: result });
         })
         .catch(() => {
           dispatch({ type: 'FETCH_ERROR' });
+        })
+        .finally(() => {
+          isFetchingRef.current = false;
         });
 
       return;
@@ -74,12 +82,14 @@ export const useFetchData = <Data, Params = void>({
     dispatch({ type: 'FETCH_START' });
     try {
       const result = await fetchFunctionRef.current();
-      globalCache.set(key, result);
+      if (shouldCache) globalCache.set(key, result);
       dispatch({ type: 'FETCH_SUCCESS', payload: result });
     } catch (error) {
       dispatch({ type: 'FETCH_ERROR' });
+    } finally {
+      isFetchingRef.current = false;
     }
-  }, [key]);
+  }, [key, shouldCache]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -96,7 +106,7 @@ export const useFetchData = <Data, Params = void>({
         intervalRef.current = null;
       }
     };
-  }, [enabled, refetchInterval, key]);
+  }, [enabled, refetchInterval, key, fetchData]);
 
   return { ...state, refetch: fetchData };
 };
