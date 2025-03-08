@@ -1,6 +1,16 @@
-import Modal from "./index";
+import { PropsWithChildren } from "react";
+import Modal from ".";
 
-export function Root({ isOpen, onClose, children }) {
+type ModalPropsType = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export function Root({
+  isOpen,
+  onClose,
+  children,
+}: PropsWithChildren & ModalPropsType) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="modal modal--open">
@@ -11,11 +21,11 @@ export function Root({ isOpen, onClose, children }) {
   );
 }
 
-export function Title({ children }) {
+export function Title({ children }: PropsWithChildren) {
   return <h2 className="modal-title text-title">{children}</h2>;
 }
 
-export function Description({ children }) {
+export function Description({ children }: PropsWithChildren) {
   return (
     <div className="restaurant-info">
       <p className="restaurant-info__description text-body">{children}</p>
@@ -23,6 +33,6 @@ export function Description({ children }) {
   );
 }
 
-export function ButtonContainer({ children }) {
+export function ButtonContainer({ children }: PropsWithChildren) {
   return <div className="button-container">{children}</div>;
 }
