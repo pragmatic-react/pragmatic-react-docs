@@ -1,3 +1,5 @@
+import { useModal } from '@features/modal';
+
 import { Category, Restaurant, RestaurantCard, fetchRestaurantData } from '@entities/restaurant';
 
 import { useFetchData } from '@shared/hooks';
