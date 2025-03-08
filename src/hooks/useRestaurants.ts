@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { fetchRestaurants } from "../api/restaurant";
 import { useRestaurantContext } from "../context/useRestaurantContext";
+import { ERROR_MESSAGES } from "../api/baseApi";
 
 export const useRestaurants = () => {
   const {
@@ -10,6 +11,8 @@ export const useRestaurants = () => {
     setIsLoading,
     setIsError,
     restaurants,
+    errorMessage,
+    setErrorMessage,
   } = useRestaurantContext();
 
   const fetchData = async () => {
@@ -19,6 +22,11 @@ export const useRestaurants = () => {
       const data = await fetchRestaurants();
       setRestaurants(data);
     } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage(ERROR_MESSAGES.UNKNOWN_ERROR);
+      }
       setIsError(true);
     } finally {
       setIsLoading(false);
@@ -29,5 +37,5 @@ export const useRestaurants = () => {
     fetchData();
   }, []);
 
-  return { restaurants, isLoading, isError };
+  return { restaurants, isLoading, isError, errorMessage };
 };

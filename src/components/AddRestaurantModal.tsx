@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import Modal from "./Modal";
 import { Category } from "../types/restaurant";
 import { useAddRestaurant } from "../hooks/useAddRestaurant";
+import ErrorMessage from "./ErrorMessage";
 
 function AddRestaurantModal({
   isOpen,
@@ -13,7 +14,7 @@ function AddRestaurantModal({
   const [category, setCategory] = useState<Category | "">("");
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addNewRestaurant } = useAddRestaurant();
+  const { addNewRestaurant, errorMessage, isError } = useAddRestaurant();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     if (!isFormValid) return;
@@ -32,7 +33,7 @@ function AddRestaurantModal({
     };
 
     try {
-      addNewRestaurant(newRestaurant);
+      await addNewRestaurant(newRestaurant);
       onClose();
     } finally {
       setIsSubmitting(false);
@@ -49,6 +50,7 @@ function AddRestaurantModal({
       </Modal.Header>
 
       <Modal.Body>
+        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <form onSubmit={handleSubmit}>
           {/* // TODO: select 중복 개선 */}
           <div className="form-item form-item--required">
@@ -97,7 +99,7 @@ function AddRestaurantModal({
             <Modal.ButtonContainer>
               <Modal.Button
                 type="submit"
-                disabled={!isFormValid || isSubmitting}
+                disabled={!isFormValid || isSubmitting || isError}
               >
                 {isSubmitting ? "추가 중..." : "추가하기"}
               </Modal.Button>

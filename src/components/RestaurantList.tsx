@@ -13,13 +13,14 @@ import { Category, CategorySelectList } from "../types/restaurant";
 import { Restaurant } from "../types/restaurant";
 import RestaurantDetailModal from "./RestaurantDetailModal";
 import { useRestaurants } from "../hooks/useRestaurants";
+import ErrorMessage from "./ErrorMessage";
 
 function RestaurantList({
   selectedCategory,
 }: {
   selectedCategory: CategorySelectList;
 }) {
-  const { restaurants, isLoading, isError } = useRestaurants();
+  const { restaurants, isLoading, isError, errorMessage } = useRestaurants();
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
 
@@ -31,7 +32,7 @@ function RestaurantList({
         );
 
   if (isLoading) return <div>로딩중...</div>;
-  if (isError) return <div>에러가 발생했습니다. 다시 시도해주세요.</div>;
+  if (isError) return <ErrorMessage>{errorMessage}</ErrorMessage>;
 
   return (
     <>
