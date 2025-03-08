@@ -4,7 +4,14 @@ type Params = {
   category?: Category;
 };
 
-export const fetchRestaurantData = async (params?: Params): Promise<Restaurant[]> => {
+type FetchRestaurantData = {
+  request: Params;
+  response: { restaurants: Restaurant[] };
+};
+
+export const fetchRestaurantData = async (
+  params?: FetchRestaurantData['request'],
+): Promise<FetchRestaurantData['response']> => {
   const response = await fetch('/db.json');
   if (!response.ok) {
     throw new Error('Failed to fetch data');

@@ -1,17 +1,22 @@
+import { useEffect, useState } from 'react';
+
 import { useModal } from '@features/modal';
 
-import { Category, Restaurant, RestaurantCard } from '@entities/restaurant';
+import { Category, Restaurant, RestaurantCard, fetchRestaurantData } from '@entities/restaurant';
 
-import data from '../../../../db.json';
+import { useFetchData } from '@shared/hooks';
 
 type Props = { category: Category | null; setSelected: (restaurant: Restaurant) => void };
 
 export const RestaurantList = ({ category, setSelected }: Props) => {
-  const { restaurants } = data as { restaurants: Restaurant[] };
   const { openModal } = useModal();
 
-  const filteredRestaurants =
-    category === null ? restaurants : restaurants.filter((restaurant) => restaurant.category === category);
+  const { data } = useFetchData({
+    fetchFunction: async () => {
+      const data = await fetchRestaurantData();
+      return data;
+    },
+  });
 
   const handleCardClick = (restaurant: Restaurant) => () => {
     setSelected(restaurant);
@@ -20,7 +25,7 @@ export const RestaurantList = ({ category, setSelected }: Props) => {
 
   return (
     <ul className="restaurant-list-container">
-      {filteredRestaurants.map((restaurant) => (
+      {data?.restaurants?.map((restaurant) => (
         <RestaurantCard key={restaurant.id} restaurant={restaurant} onClick={handleCardClick} />
       ))}
     </ul>

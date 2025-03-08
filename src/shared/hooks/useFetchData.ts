@@ -2,11 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 export const useFetchData = <Data, Params = void>({
   fetchFunction,
-  enabled,
+  enabled = true,
   refetchInterval,
 }: {
   fetchFunction: (params?: Params) => Promise<Data>;
-  enabled: boolean;
+  enabled?: boolean;
   refetchInterval?: number;
 }) => {
   const [data, setData] = useState<Data | undefined>(undefined);
