@@ -6,35 +6,22 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "npx json-server db.json"
   },
   "dependencies": {
-    "@emotion/styled": "^11.14.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "zustand": "^5.0.3"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@emotion/react": "^11.14.0",
-    "@types/node": "^22.13.7",
-    "@types/react": "^18.3.18",
+    "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
-    "@typescript-eslint/eslint-plugin": "^8.25.0",
-    "@typescript-eslint/parser": "^8.25.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.0.2",
-    "eslint-plugin-emotion": "^11.0.0",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "prettier": "^3.5.2",
-    "typescript": "^5.8.2",
-    "vite": "^5.2.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite": "^5.2.0"
   }
 }
