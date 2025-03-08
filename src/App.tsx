@@ -1,12 +1,17 @@
 import "./App.css";
+import { useState } from "react";
 import Header from "./components/Header";
 import MainPage from "./components/MainPage";
+import { CacheProvider } from "./utils/CacheManager";
+
 function App() {
   return (
-    <>
-      <Header />
-      <MainPage />
-    </>
+    <CacheProvider>
+      <>
+        <Header />
+        <MainPage />
+      </>
+    </CacheProvider>
   );
 }
 

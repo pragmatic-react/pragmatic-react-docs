@@ -1,22 +1,22 @@
 import { useState } from "react";
 import useRestaurants from "../../hooks/useRestaurants";
 import { Restaurant as RestaurantType } from "../../models";
-import RestaurantModal, { RestaurantModalData } from "./RestaurantModal";
+import RestaurantInfoModal, {
+  RestaurantModalData,
+} from "./RestaurantInfoModal";
 import RestaurantList from "./RestaurantList";
 import Section from "../../UI/Section";
 
 const RestaurantSection = () => {
   const { restaurants } = useRestaurants();
-
-  // todo : 모달 상태 관리
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false);
   const [modalData, setModalData] = useState<RestaurantModalData>({
     name: "",
     description: "",
   });
 
-  const openRestaurantModal = (data: RestaurantType) => {
-    setModalOpen(true);
+  const openRestaurantInfoModal = (data: RestaurantType) => {
+    setInfoModalOpen(true);
     setModalData({
       name: data?.name || "",
       description: data?.description || "",
@@ -24,18 +24,19 @@ const RestaurantSection = () => {
   };
 
   const onCloseRestaurantModal = () => {
-    setModalOpen(false);
+    setInfoModalOpen(false);
   };
 
   return (
     <Section className="restaurant-list-container">
       <RestaurantList
         data={restaurants}
-        openRestaurantModal={openRestaurantModal}
+        openRestaurantModal={openRestaurantInfoModal}
       />
-      <RestaurantModal
-        isOpen={modalOpen}
-        restaurant={modalData}
+      <RestaurantInfoModal
+        title={modalData.name}
+        isOpen={infoModalOpen}
+        description={modalData.description}
         onClose={onCloseRestaurantModal}
       />
     </Section>

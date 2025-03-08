@@ -1,30 +1,39 @@
 import { useEffect, useState } from "react";
-import { Restaurant } from "../models";
+import { Restaurant, RestaurantSubmitType } from "../models";
+import useFetch from "../utils/useFetch";
 
 const useRestaurants = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>();
+  const [data, loading, error, getData] = useFetch<Restaurant[]>("restaurants");
+  const [restaurants, setRestaurant] = useState<Restaurant[]>([]);
+  const [d, l, e, postData] = useFetch<Restaurant[]>("restaurants", "POST");
 
   useEffect(() => {
-    const fetchRetaurants = async () => {
-      const response = await fetch("./db.json");
-      const data = await response.json();
-      const restaurantData = data["restaurants"] as Restaurant[];
-      const restaurants = restaurantData.map(
-        (data) =>
-          new Restaurant(data.id, data.name, data.description, data.category)
-      );
-      setRestaurants(restaurants);
-    };
+    setRestaurant(
+      data?.map(
+        (restaurant) =>
+          new Restaurant(
+            restaurant.id,
+            restaurant.name,
+            restaurant.description,
+            restaurant.category
+          )
+      ) ?? []
+    );
+  }, [data]);
 
-    try {
-      fetchRetaurants();
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+  const addRestaurant = async (restaurant: RestaurantSubmitType) => {
+    postData(restaurant)
+      .then(() => getData({}, true))
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   return {
     restaurants,
+    addRestaurant,
+    loading: loading,
+    error: error,
   };
 };
 export default useRestaurants;

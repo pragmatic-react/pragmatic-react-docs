@@ -17,7 +17,9 @@ export class Restaurant {
     public category: Category
   ) {}
 
-  getCategoryImgSrc() {
+  get categoryImgSrc(): string {
     return CATEGORY_IMAGE_SRC[this.category];
   }
 }
+
+export type RestaurantSubmitType = Omit<Restaurant, "id" | "categoryImgSrc">;
