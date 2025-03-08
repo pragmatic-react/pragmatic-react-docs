@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { AppHeader } from '@widgets/layout';
-import { RestaurantList } from '@widgets/restaurant';
+import { RestaurantDetailDrawer, RestaurantList } from '@widgets/restaurant';
 
 import { ModalProvider, useModal } from '@features/modal';
-import { CategorySelect, RestaurantDetailDrawer } from '@features/restaurant';
+import { CategorySelect } from '@features/restaurant';
 
 import { Category, Restaurant } from '@entities/restaurant';
 
