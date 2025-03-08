@@ -1,11 +1,12 @@
-import { restaurantListStore } from '@/stores';
 import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
-import mockData from '@/mock/db.json';
+import { useEffect } from 'react';
 import { Restaurant } from '@/types';
+import { useBooleanState } from '@/hooks';
+import { restaurantListStore } from '@/stores';
+import { getRestaurantList } from '@/api';
+
 import { RestaurantItem } from './item';
 import { RestaurantDetailModal } from '../modal';
-import { useBooleanState } from '@/hooks';
 
 const containerStyle = css`
   display: flex;
@@ -30,18 +31,18 @@ export function RestaurantList() {
   };
 
   useEffect(() => {
-    const storedData = localStorage.getItem('items');
-    if (storedData) {
-      const parsedData = JSON.parse(storedData) || [];
-      setRestaurants(parsedData.items);
+    const fetchData = async () => {
+      try {
+        const data = await getRestaurantList();
+        setRestaurants(data);
+      } catch (error) {
+        console.error("레스토랑 목록을 가져오는 데 실패했습니다.", error);
+      }
+    };
 
-      return;
-    }
-    // localStorage에 데이터가 없다면, mock 데이터를 저장
-    localStorage.setItem('items', JSON.stringify(mockData)); // localStorage에 저장
-    setRestaurants(mockData.items as Restaurant[]);
+    fetchData();
   }, [setRestaurants]);
-
+  
   return (
     <section css={containerStyle}>
       {restaurants.length > 0 ? (
