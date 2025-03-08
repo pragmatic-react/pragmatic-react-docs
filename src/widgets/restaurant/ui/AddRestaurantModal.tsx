@@ -53,7 +53,7 @@ export const AddRestaurantModal = ({ isOpen, onClose }: Props) => {
           </label>
           <select name="category" id="category" required onChange={handleChange('category')}>
             {CATEGORY_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option key={option.value ?? 'default'} value={option.value}>
                 {option.label}
               </option>
             ))}
