@@ -19,8 +19,6 @@ function CreateRestaurantModal({
       // TODO: input을 이용해서 데이터를 받아오기
       await onAddRestaurant({
         name: '순두부 테스트점222',
-        address: '서울특별시 강남구 태스트길 123길 123 테스트빌딩 123층',
-        phone: '02-123-123',
         category: '한식',
         description: '푸짐한 양에 국물이 일품인 순두부',
       });
