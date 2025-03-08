@@ -3,7 +3,6 @@ import useRestaurants from "../hooks/useRestaurants";
 import AddRestaurantModal from "../components/Restaurants/AddRestaurantModal";
 
 const Header = () => {
-  const { addRestaurant } = useRestaurants();
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
   return (
@@ -20,7 +19,6 @@ const Header = () => {
       <AddRestaurantModal
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
-        addRestaurant={addRestaurant}
       />
     </header>
   );
