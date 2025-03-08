@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 
+const globalCache = new Map<string, any>();
 interface FetchState<Data> {
   data?: Data;
   isPending: boolean;
@@ -23,18 +24,20 @@ const fetchReducer = <Data>(state: FetchState<Data>, action: FetchAction<Data>):
 };
 
 export const useFetchData = <Data, Params = void>({
+  key,
   fetchFunction,
   enabled = true,
   refetchInterval,
 }: {
+  key: string;
   fetchFunction: (params?: Params) => Promise<Data>;
   enabled?: boolean;
   refetchInterval?: number;
 }) => {
   const [state, dispatch] = useReducer(fetchReducer<Data>, {
-    data: undefined,
+    data: globalCache.get(key),
     isPending: false,
-    isSuccess: false,
+    isSuccess: !!globalCache.get(key),
     isError: false,
   });
 
@@ -49,8 +52,20 @@ export const useFetchData = <Data, Params = void>({
     dispatch({ type: 'FETCH_START' });
 
     try {
+      if (globalCache.has(key)) {
+        const cachedData = globalCache.get(key);
+        dispatch({ type: 'FETCH_SUCCESS', payload: cachedData });
+
+        // stale-while-revalidate 방식 적용
+        const result = await fetchFunctionRef.current();
+        globalCache.set(key, result);
+        dispatch({ type: 'FETCH_SUCCESS', payload: result });
+        return;
+      }
+
       const result = await fetchFunctionRef.current();
       dispatch({ type: 'FETCH_SUCCESS', payload: result });
+      globalCache.set(key, result);
     } catch (error) {
       dispatch({ type: 'FETCH_ERROR' });
     }
@@ -71,7 +86,7 @@ export const useFetchData = <Data, Params = void>({
         intervalRef.current = null;
       }
     };
-  }, [enabled, refetchInterval, fetchData]);
+  }, [enabled, refetchInterval, fetchData, key]);
 
   return { ...state, refetch: fetchData };
 };

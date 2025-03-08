@@ -1,7 +1,3 @@
-import { useEffect, useState } from 'react';
-
-import { useModal } from '@features/modal';
-
 import { Category, Restaurant, RestaurantCard, fetchRestaurantData } from '@entities/restaurant';
 
 import { useFetchData } from '@shared/hooks';
@@ -12,6 +8,7 @@ export const RestaurantList = ({ category, setSelected }: Props) => {
   const { openModal } = useModal();
 
   const { data } = useFetchData({
+    key: `restaurant-list-${category}`,
     fetchFunction: async () => {
       const data = await fetchRestaurantData({ category: category ?? undefined });
       return data;
