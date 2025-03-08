@@ -17,6 +17,8 @@ export const restaurantListStore = create<Store>((set) => ({
     description: '',
     link: '',
     category: '' as RestaurantCategory,
+    id: 0,
+    is_favorite: false
   },
   setSelectedItem: (selectedItem: Restaurant) => set({ selectedItem }),
 }));
