@@ -47,7 +47,7 @@ export default function RestaurantList({ restaurants }: RestaurantListProps) {
   };
 
   return (
-    <div className='divide-gray10 flex flex-col divide-y'>
+    <div className='divide-gray10 flex h-screen flex-col divide-y overflow-y-auto pb-16'>
       {/* Restaurant List */}
       {restaurants.map((restaurant) => (
         <RestaurantCard

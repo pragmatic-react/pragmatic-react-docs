@@ -1,10 +1,12 @@
-import { useContext } from 'react';
-import { ModalContext } from './ModalProvider';
+import { useState } from 'react';
 
 export const useModal = () => {
-  const context = useContext(ModalContext);
-  if (context === undefined) {
-    throw new Error('useModal must be used within a ModalProvider');
-  }
-  return context;
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+  const closeModal = () => setIsOpen(false);
+
+  return { isOpen, openModal, closeModal };
 };
