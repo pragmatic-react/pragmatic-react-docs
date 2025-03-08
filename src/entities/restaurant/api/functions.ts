@@ -22,3 +22,13 @@ export const fetchRestaurantData = async (
 
   return data;
 };
+
+export type AddRestaurantData = {
+  request: Omit<Restaurant, 'id'>;
+};
+
+export const addRestaurantData = async (body: AddRestaurantData['request']) => {
+  const data = await fetcher.post('/restaurants', body);
+
+  return data;
+};
