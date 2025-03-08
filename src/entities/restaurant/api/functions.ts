@@ -18,8 +18,12 @@ export const fetchRestaurantData = async (
   }
   const data = await response.json();
 
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   if (params?.category) {
-    return data.filter((restaurant: Restaurant) => restaurant.category === params.category);
+    return {
+      restaurants: data.restaurants.filter((restaurant: Restaurant) => restaurant.category === params.category),
+    };
   }
   return data;
 };

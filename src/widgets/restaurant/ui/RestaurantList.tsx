@@ -13,7 +13,7 @@ export const RestaurantList = ({ category, setSelected }: Props) => {
 
   const { data } = useFetchData({
     fetchFunction: async () => {
-      const data = await fetchRestaurantData();
+      const data = await fetchRestaurantData({ category: category ?? undefined });
       return data;
     },
   });
