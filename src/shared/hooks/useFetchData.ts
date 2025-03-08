@@ -1,28 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 
-const globalCache = new Map<string, any>();
-
-interface FetchState<Data> {
-  data?: Data;
-  isPending: boolean;
-  isSuccess: boolean;
-  isError: boolean;
-}
-
-type FetchAction<Data> = { type: 'FETCH_START' } | { type: 'FETCH_SUCCESS'; payload: Data } | { type: 'FETCH_ERROR' };
-
-const fetchReducer = <Data>(state: FetchState<Data>, action: FetchAction<Data>): FetchState<Data> => {
-  switch (action.type) {
-    case 'FETCH_START':
-      return { ...state, isPending: true, isError: false, isSuccess: false };
-    case 'FETCH_SUCCESS':
-      return { data: action.payload, isPending: false, isSuccess: true, isError: false };
-    case 'FETCH_ERROR':
-      return { ...state, isPending: false, isError: true, isSuccess: false };
-    default:
-      return state;
-  }
-};
+import { getCachedData, hasCache, setCachedData } from './cache';
+import { useFetchReducer } from './useFetchReducer';
 
 export const useFetchData = <Data, Params = void>({
   key,
@@ -37,13 +16,8 @@ export const useFetchData = <Data, Params = void>({
   refetchInterval?: number;
   shouldCache?: boolean;
 }) => {
-  const initialData = shouldCache ? globalCache.get(key) : undefined;
-  const [state, dispatch] = useReducer(fetchReducer<Data>, {
-    data: initialData,
-    isPending: !initialData,
-    isSuccess: !!initialData,
-    isError: false,
-  });
+  const initialData = shouldCache ? getCachedData<Data>(key) : undefined;
+  const { state, dispatch } = useFetchReducer<Data>(initialData);
 
   const fetchFunctionRef = useRef(fetchFunction);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -57,15 +31,15 @@ export const useFetchData = <Data, Params = void>({
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
 
-    if (shouldCache && globalCache.has(key)) {
-      const cachedData = globalCache.get(key);
-      dispatch({ type: 'FETCH_SUCCESS', payload: cachedData });
+    if (shouldCache && hasCache(key)) {
+      const cachedData = getCachedData<Data>(key);
+      dispatch({ type: 'FETCH_SUCCESS', payload: cachedData as Data });
 
       // Stale-while-revalidate: 캐시된 데이터를 우선 제공하고, 백그라운드에서 최신 데이터 갱신
       fetchFunctionRef
         .current()
         .then((result) => {
-          if (shouldCache) globalCache.set(key, result);
+          if (shouldCache) setCachedData(key, result);
           dispatch({ type: 'FETCH_SUCCESS', payload: result });
         })
         .catch(() => {
@@ -82,7 +56,7 @@ export const useFetchData = <Data, Params = void>({
     dispatch({ type: 'FETCH_START' });
     try {
       const result = await fetchFunctionRef.current();
-      if (shouldCache) globalCache.set(key, result);
+      if (shouldCache) setCachedData(key, result);
       dispatch({ type: 'FETCH_SUCCESS', payload: result });
     } catch (error) {
       dispatch({ type: 'FETCH_ERROR' });
