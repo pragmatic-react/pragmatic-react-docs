@@ -7,7 +7,7 @@ export type RequestModalProps = ModalType & {
   restaurant: RestaurantModalData;
 };
 
-const RestaurantModal = ({
+const RestaurantInfoModal = ({
   restaurant,
   isOpen,
   onClose,
@@ -23,4 +23,4 @@ const RestaurantModal = ({
   );
 };
 
-export default RestaurantModal;
+export default RestaurantInfoModal;

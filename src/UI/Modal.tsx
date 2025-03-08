@@ -7,9 +7,9 @@ export type ModalType = PropsWithChildren<{
   title?: string;
 }>;
 
-const Modal = ({ children, title, open, onClose }: ModalType) => {
+const Modal = ({ children, title, isOpen, onClose }: ModalType) => {
   return createPortal(
-    <div className={`modal ${open ? "modal--open" : ""}`}>
+    <div className={`modal ${isOpen ? "modal--open" : ""}`}>
       <div className="modal-backdrop" onClick={onClose}></div>
       <div className="modal-container">
         {title && <h2 className="modal-title text-title">{title}</h2>}
