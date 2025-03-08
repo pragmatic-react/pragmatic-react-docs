@@ -7,9 +7,13 @@ export type RequestModalProps = ModalType & {
   restaurant: RestaurantModalData;
 };
 
-const RestaurantModal = ({ restaurant, open, onClose }: RequestModalProps) => {
+const RestaurantModal = ({
+  restaurant,
+  isOpen,
+  onClose,
+}: RequestModalProps) => {
   return (
-    <Modal title={restaurant.name} open={open} onClose={onClose}>
+    <Modal title={restaurant.name} isOpen={isOpen} onClose={onClose}>
       <div className="restaurant-info">
         <p className="restaurant-info__description text-body">
           {restaurant.description}

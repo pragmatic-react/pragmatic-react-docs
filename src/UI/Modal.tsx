@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 
-export type ModalType = {
-  open: boolean;
+export type ModalType = PropsWithChildren<{
+  isOpen: boolean;
   onClose: () => void;
   title?: string;
-  children?: React.ReactNode;
-};
+}>;
 
 const Modal = ({ children, title, open, onClose }: ModalType) => {
   return createPortal(

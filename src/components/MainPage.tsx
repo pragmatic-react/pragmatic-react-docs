@@ -1,6 +1,4 @@
-import { ReactElement } from "react";
-import Section from "./UI/Section";
-import Restaurants from "./components/Restaurants";
+import Restaurants from "./Restaurants";
 
 const MainPage = () => {
   return (

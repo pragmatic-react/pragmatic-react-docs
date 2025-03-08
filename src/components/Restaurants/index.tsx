@@ -8,6 +8,7 @@ import Section from "../../UI/Section";
 const RestaurantSection = () => {
   const { restaurants } = useRestaurants();
 
+  // todo : 모달 상태 관리
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalData, setModalData] = useState<RestaurantModalData>({
     name: "",
@@ -17,8 +18,8 @@ const RestaurantSection = () => {
   const openRestaurantModal = (data: RestaurantType) => {
     setModalOpen(true);
     setModalData({
-      name: modalData?.name || "",
-      description: modalData?.description || "",
+      name: data?.name || "",
+      description: data?.description || "",
     });
   };
 
@@ -33,7 +34,7 @@ const RestaurantSection = () => {
         openRestaurantModal={openRestaurantModal}
       />
       <RestaurantModal
-        open={modalOpen}
+        isOpen={modalOpen}
         restaurant={modalData}
         onClose={onCloseRestaurantModal}
       />
