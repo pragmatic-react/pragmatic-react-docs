@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 
 const globalCache = new Map<string, any>();
+
 interface FetchState<Data> {
   data?: Data;
   isPending: boolean;
@@ -34,10 +35,12 @@ export const useFetchData = <Data, Params = void>({
   enabled?: boolean;
   refetchInterval?: number;
 }) => {
+  // 초기 캐싱된 데이터 불러오기
+  const initialData = globalCache.get(key);
   const [state, dispatch] = useReducer(fetchReducer<Data>, {
-    data: globalCache.get(key),
+    data: initialData,
     isPending: false,
-    isSuccess: !!globalCache.get(key),
+    isSuccess: !!initialData,
     isError: false,
   });
 
@@ -49,32 +52,39 @@ export const useFetchData = <Data, Params = void>({
   }, [fetchFunction]);
 
   const fetchData = useCallback(async () => {
+    if (globalCache.has(key)) {
+      const cachedData = globalCache.get(key);
+      dispatch({ type: 'FETCH_SUCCESS', payload: cachedData });
+
+      // Stale-while-revalidate: 캐시된 데이터를 우선 제공하고, 백그라운드에서 최신 데이터 갱신
+      fetchFunctionRef
+        .current()
+        .then((result) => {
+          globalCache.set(key, result);
+          dispatch({ type: 'FETCH_SUCCESS', payload: result });
+        })
+        .catch(() => {
+          dispatch({ type: 'FETCH_ERROR' });
+        });
+
+      return;
+    }
+
+    // 새로운 데이터 요청
     dispatch({ type: 'FETCH_START' });
-
     try {
-      if (globalCache.has(key)) {
-        const cachedData = globalCache.get(key);
-        dispatch({ type: 'FETCH_SUCCESS', payload: cachedData });
-
-        // stale-while-revalidate 방식 적용
-        const result = await fetchFunctionRef.current();
-        globalCache.set(key, result);
-        dispatch({ type: 'FETCH_SUCCESS', payload: result });
-        return;
-      }
-
       const result = await fetchFunctionRef.current();
-      dispatch({ type: 'FETCH_SUCCESS', payload: result });
       globalCache.set(key, result);
+      dispatch({ type: 'FETCH_SUCCESS', payload: result });
     } catch (error) {
       dispatch({ type: 'FETCH_ERROR' });
     }
-  }, []);
+  }, [key]);
 
   useEffect(() => {
     if (!enabled) return;
 
-    fetchData();
+    fetchData(); // 초기 데이터 패치 실행
 
     if (refetchInterval) {
       intervalRef.current = setInterval(fetchData, refetchInterval);
@@ -86,7 +96,7 @@ export const useFetchData = <Data, Params = void>({
         intervalRef.current = null;
       }
     };
-  }, [enabled, refetchInterval, fetchData, key]);
+  }, [enabled, refetchInterval, key]);
 
   return { ...state, refetch: fetchData };
 };
