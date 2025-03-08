@@ -3,31 +3,19 @@ import { useModal } from '@features/modal';
 import { Category, Restaurant, RestaurantCard, fetchRestaurantData } from '@entities/restaurant';
 
 import { useFetchData } from '@shared/hooks';
+import { RestaurantSkeleton } from '@shared/ui';
 
-type Props = { category: Category | null; setSelected: (restaurant: Restaurant) => void };
+type Props = { data: Restaurant[]; isPending: boolean; handleCardClick: (restaurant: Restaurant) => () => void };
 
-export const RestaurantList = ({ category, setSelected }: Props) => {
-  const { openModal } = useModal();
-
-  const { data } = useFetchData({
-    key: `restaurant-list-${category}`,
-    fetchFunction: async () => {
-      const params = category ? { category } : undefined;
-      const data = await fetchRestaurantData(params);
-      return data;
-    },
-    suspense: true,
-  });
-
-  const handleCardClick = (restaurant: Restaurant) => () => {
-    setSelected(restaurant);
-    openModal();
-  };
+export const RestaurantList = ({ data, isPending, handleCardClick }: Props) => {
+  if (isPending) {
+    return <RestaurantSkeleton />;
+  }
 
   return (
     <ul className="restaurant-list-container">
       {data?.map((restaurant) => (
-        <RestaurantCard key={restaurant.id} restaurant={restaurant} onClick={handleCardClick} />
+        <RestaurantCard key={restaurant.id} restaurant={restaurant} onClick={handleCardClick(restaurant)} />
       ))}
     </ul>
   );
