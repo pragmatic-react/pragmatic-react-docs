@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "preview": "vite preview",
-    "server": "npx json-server db.json"
+    "server": "npx json-server src/mock/db.json"
   },
   "dependencies": {
     "@emotion/styled": "^11.14.0",
