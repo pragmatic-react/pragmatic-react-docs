@@ -1,4 +1,4 @@
-import { MouseEventHandler } from 'react';
+import { ChangeEventHandler } from 'react';
 
 import { Category } from '@entities/restaurant';
 
@@ -20,7 +20,7 @@ type Props = {
 };
 
 export const CategorySelect = ({ category, setCategory }: Props) => {
-  const handleClick: MouseEventHandler<HTMLSelectElement> = (e) => {
+  const handleChange: ChangeEventHandler<HTMLSelectElement> = (e) => {
     const value = e.currentTarget.value;
 
     if (value === '전체') {
@@ -38,7 +38,7 @@ export const CategorySelect = ({ category, setCategory }: Props) => {
       value={category ?? '전체'}
       aria-label="음식점 카테고리 필터"
       options={CATEGORIES}
-      onClick={handleClick}
+      onChange={handleChange}
     />
   );
 };
