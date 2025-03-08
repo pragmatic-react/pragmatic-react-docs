@@ -1,8 +1,5 @@
-import { useModal } from '@features/modal';
+import { Restaurant, RestaurantCard } from '@entities/restaurant';
 
-import { Category, Restaurant, RestaurantCard, fetchRestaurantData } from '@entities/restaurant';
-
-import { useFetchData } from '@shared/hooks';
 import { RestaurantSkeleton } from '@shared/ui';
 
 type Props = { data: Restaurant[]; isPending: boolean; handleCardClick: (restaurant: Restaurant) => () => void };
