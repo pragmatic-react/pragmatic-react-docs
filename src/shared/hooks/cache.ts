@@ -11,3 +11,11 @@ export const setCachedData = <Data>(key: string, data: Data): void => {
 export const hasCache = (key: string): boolean => {
   return globalCache.has(key);
 };
+
+export const clearCache = (key: string): void => {
+  globalCache.delete(key);
+};
+
+export const clearAllCache = (): void => {
+  globalCache.clear();
+};
