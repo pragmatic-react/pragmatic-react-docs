@@ -1,12 +1,10 @@
 import { Category, Restaurant } from '../model';
 
-export const fetchRestaurantData = async ({
-  params,
-}: {
-  params?: {
-    category: Category;
-  };
-}): Promise<Restaurant[]> => {
+type Params = {
+  category?: Category;
+};
+
+export const fetchRestaurantData = async (params?: Params): Promise<Restaurant[]> => {
   const response = await fetch('/db.json');
   if (!response.ok) {
     throw new Error('Failed to fetch data');
