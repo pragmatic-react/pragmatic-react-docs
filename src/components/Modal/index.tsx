@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 
 import Title from "./Title";
@@ -12,10 +12,9 @@ import useBodyOverflowHidden from "./hooks/useBodyOverflowHidden";
 import useKeyDown from "./hooks/useKeyDown";
 import { ModalContext } from "./hooks/useModal";
 
-interface ModalProps {
+interface ModalProps extends PropsWithChildren {
   isOpen: boolean;
   onClose: () => void;
-  children: ReactNode;
 }
 
 function Modal({ isOpen, onClose, children }: ModalProps) {

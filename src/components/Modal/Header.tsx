@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-function Header({ children }: { children: ReactNode }) {
+function Header({ children }: PropsWithChildren) {
   return <div>{children}</div>;
 }
 export default Header;

@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-function Footer({ children }: { children: ReactNode }) {
+function Footer({ children }: PropsWithChildren) {
   return <div>{children}</div>;
 }
 export default Footer;

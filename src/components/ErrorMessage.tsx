@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-const ErrorMessage = ({ children }: { children: ReactNode }) => {
+const ErrorMessage = ({ children }: PropsWithChildren) => {
   return (
     <div>
       <p style={{ color: "red" }}>{children}</p>

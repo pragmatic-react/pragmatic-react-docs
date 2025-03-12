@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, PropsWithChildren, useState } from "react";
 
 import { Restaurant } from "./types/restaurant";
 
@@ -17,7 +17,7 @@ export const RestaurantContext = createContext<
   RestaurantContextType | undefined
 >(undefined);
 
-export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
+export const RestaurantProvider = ({ children }: PropsWithChildren) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);

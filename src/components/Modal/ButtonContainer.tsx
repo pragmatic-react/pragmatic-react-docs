@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-function ButtonContainer({ children }: { children: ReactNode }) {
+function ButtonContainer({ children }: PropsWithChildren) {
   return <div className="button-container">{children}</div>;
 }
 export default ButtonContainer;

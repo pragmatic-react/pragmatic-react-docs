@@ -24,7 +24,5 @@ export const useAddRestaurant = () => {
     }
   };
 
-  console.log("useAddRestaurant", errorMessage);
-
   return { addNewRestaurant, isError, errorMessage };
 };
