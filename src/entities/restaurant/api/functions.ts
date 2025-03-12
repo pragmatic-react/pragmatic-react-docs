@@ -32,3 +32,16 @@ export const addRestaurantData = async (body: AddRestaurantData['request']) => {
 
   return data;
 };
+
+export type fetchFavoriteRestaurantData = {
+  request: Params;
+  response: Restaurant[];
+};
+
+export const fetchFavoriteRestaurantData = async (params?: fetchFavoriteRestaurantData['request']) => {
+  const data = await fetcher.get<fetchFavoriteRestaurantData['response']>('/restaurants', {
+    params: { ...params, isFavorite: true.toString() },
+  });
+
+  return data;
+};
