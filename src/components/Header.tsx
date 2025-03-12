@@ -22,9 +22,7 @@ function Header() {
         </button>
       </header>
 
-      {isModalOpen && (
-        <AddRestaurantModal isOpen={isModalOpen} onClose={handleToggleModal} />
-      )}
+      <AddRestaurantModal isOpen={isModalOpen} onClose={handleToggleModal} />
     </>
   );
 }
