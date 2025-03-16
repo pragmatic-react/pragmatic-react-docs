@@ -5,4 +5,5 @@ export type Restaurant = {
   name: string;
   description: string;
   category: Category;
+  isFavorite: boolean;
 };

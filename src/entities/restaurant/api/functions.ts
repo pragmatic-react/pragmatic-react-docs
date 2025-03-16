@@ -1,20 +1,47 @@
+import { fetcher } from '@shared/api';
+
 import { Category, Restaurant } from '../model';
 
-export const fetchRestaurantData = async ({
-  params,
-}: {
-  params?: {
-    category: Category;
-  };
-}): Promise<Restaurant[]> => {
-  const response = await fetch('/db.json');
-  if (!response.ok) {
-    throw new Error('Failed to fetch data');
-  }
-  const data = await response.json();
+type Params = {
+  category?: Category;
+};
 
-  if (params?.category) {
-    return data.filter((restaurant: Restaurant) => restaurant.category === params.category);
-  }
+type FetchRestaurantData = {
+  request: Params;
+  response: Restaurant[];
+};
+
+export const fetchRestaurantData = async (
+  params?: FetchRestaurantData['request'],
+): Promise<FetchRestaurantData['response']> => {
+  const data = await fetcher.get<FetchRestaurantData['response']>('/restaurants', {
+    params,
+  });
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return data;
+};
+
+export type AddRestaurantData = {
+  request: Omit<Restaurant, 'id'>;
+};
+
+export const addRestaurantData = async (body: AddRestaurantData['request']) => {
+  const data = await fetcher.post('/restaurants', body);
+
+  return data;
+};
+
+export type fetchFavoriteRestaurantData = {
+  request: Params;
+  response: Restaurant[];
+};
+
+export const fetchFavoriteRestaurantData = async (params?: fetchFavoriteRestaurantData['request']) => {
+  const data = await fetcher.get<fetchFavoriteRestaurantData['response']>('/restaurants', {
+    params: { ...params, isFavorite: true.toString() },
+  });
+
   return data;
 };

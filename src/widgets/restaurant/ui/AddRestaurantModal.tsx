@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { CATEGORY_OPTIONS } from '@entities/restaurant';
+import { AddRestaurantData, CATEGORY_OPTIONS, addRestaurantData } from '@entities/restaurant';
 
+import { useMutation } from '@shared/hooks';
+import { useFetchContext } from '@shared/providers';
 import { Drawer } from '@shared/ui';
 
 type Props = {
@@ -9,37 +11,51 @@ type Props = {
   onClose: () => void;
 };
 
+const checkedForm = (form: Partial<AddRestaurantData['request']>): form is AddRestaurantData['request'] => {
+  if (!form.name || !form.category || !form.description) return false;
+
+  return true;
+};
+
+const initialForm: Partial<AddRestaurantData['request']> = {
+  name: undefined,
+  description: undefined,
+  category: undefined,
+};
+
 export const AddRestaurantModal = ({ isOpen, onClose }: Props) => {
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    category: '',
+  const [form, setForm] = useState<Partial<AddRestaurantData['request']>>(initialForm);
+  const { triggerRefetch } = useFetchContext();
+
+  const { mutate, isLoading } = useMutation({
+    mutationFunction: addRestaurantData,
+    onSuccess: () => {
+      onClose();
+      triggerRefetch(['restaurant-list']);
+    },
+    onError: () => {
+      alert('추가에 실패했습니다.');
+    },
   });
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      console.log(form);
-    },
-    [form],
-  );
+  const isDisabled = !checkedForm(form);
 
-  const handleChange = useCallback(
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (isDisabled) return;
+
+    mutate(form);
+  };
+
+  const handleChange =
     (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setForm((prev) => ({ ...prev, [key]: e.target.value }));
-    },
-    [],
-  );
-
-  const isDisabled = form.name === '' || form.category === '' || form.description === '';
+    };
 
   useEffect(() => {
     if (!isOpen) {
-      setForm({
-        name: '',
-        description: '',
-        category: '',
-      });
+      setForm(initialForm);
     }
   }, [isOpen]);
 
@@ -85,9 +101,9 @@ export const AddRestaurantModal = ({ isOpen, onClose }: Props) => {
           <button
             className={`button ${isDisabled ? 'button--disabled' : 'button--primary'} text-caption`}
             type="submit"
-            disabled={isDisabled}
+            disabled={isDisabled || isLoading}
           >
-            추가하기
+            {isLoading ? '추가중...' : '추가하기'}
           </button>
         </div>
       </form>
