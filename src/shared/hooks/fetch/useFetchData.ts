@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useFetchContext } from '@shared/providers';
+import { useErrorBoundary } from '@shared/ui/error/error-boundary';
 import { clearCache, getCachedData, getKeyString, hasCache, setCachedData } from '@shared/utils';
 
 import { fetchCache } from './fetchCache';
@@ -37,10 +38,13 @@ export function useFetchData<Data, Params = void>({
 }: UseFetchDataOptions<Data, Params, boolean>): SuspenseResult<Data> | NonSuspenseResult<Data> {
   const key = getKeyString(fetchKey);
   const { refetchKey, resetKey, triggerRefetch, triggerReset } = useFetchContext();
+  const { setError } = useErrorBoundary();
+
+  // 에러 상태를 저장하기 위한 ref 추가
+  const lastErrorRef = useRef<{ error: Error; shouldRetry: boolean } | null>(null);
 
   // Suspense 모드 처리
   if (suspense) {
-    // 캐시에 데이터가 있으면 바로 반환
     if (hasCache(key)) {
       return {
         data: getCachedData<Data>(key) as Data,
@@ -52,29 +56,50 @@ export function useFetchData<Data, Params = void>({
       };
     }
 
-    // 캐시된 데이터가 없고 현재 페칭 중이지 않으면 새로 페칭
+    // ✅ 수정: shouldRetry === false인 경우, 새로운 fetch를 막음
+    if (lastErrorRef.current && !lastErrorRef.current.shouldRetry) {
+      throw lastErrorRef.current.error;
+    }
+
     if (!fetchCache.hasPromise(key) && !fetchCache.hasFetching(key)) {
       fetchCache.addFetching(key);
-      const promise = fetchFunction()
-        .then((data: Data) => {
-          // 성공 시 캐시 저장 및 정리
+
+      const promise = (async () => {
+        try {
+          const data = await fetchFunction();
           setCachedData(key, data);
           fetchCache.deletePromise(key);
           fetchCache.deleteFetching(key);
+          lastErrorRef.current = null;
           return data;
-        })
-        .catch((error) => {
-          // 에러 시 캐시 정리
+        } catch (error) {
           fetchCache.deletePromise(key);
           fetchCache.deleteFetching(key);
-          throw error;
-        });
+
+          const shouldRetry = !(error instanceof Error && (error as any).shouldRetry === false);
+          const finalError = error instanceof Error ? error : new Error(String(error));
+          (finalError as any).shouldRetry = shouldRetry;
+
+          lastErrorRef.current = { error: finalError, shouldRetry };
+
+          // ✅ 수정: shouldRetry가 false이면 fetchCache에 fetching 상태 유지
+          if (!shouldRetry) {
+            fetchCache.addFetching(key); // 다시 fetch되지 않도록 막음
+          }
+
+          throw finalError;
+        }
+      })();
 
       fetchCache.addPromise(key, promise);
     }
 
-    // React Suspense를 위한 프로미스 throw
-    throw fetchCache.getPromise(key);
+    const cachedPromise = fetchCache.getPromise(key);
+    if (!cachedPromise) {
+      throw new Error('No cached promise found');
+    }
+
+    throw cachedPromise;
   }
 
   // 비-suspense 모드 처리 - 캐시에서 초기 데이터 가져오기
@@ -113,6 +138,14 @@ export function useFetchData<Data, Params = void>({
    * 중복 요청 방지 및 상태 관리를 처리
    */
   const fetchData = useCallback(async () => {
+    // shouldRetry가 false인 마지막 에러가 있다면 fetch 중단
+    if (lastErrorRef.current && !lastErrorRef.current.shouldRetry) {
+      if (!suspense) {
+        setError(lastErrorRef.current.error);
+      }
+      throw lastErrorRef.current.error;
+    }
+
     // 이미 페칭 중이면 중복 요청 방지
     if (isFetchingRef.current || fetchCache.hasFetching(key)) return;
 
@@ -127,6 +160,7 @@ export function useFetchData<Data, Params = void>({
 
       // 성공 처리
       dispatch({ type: 'FETCH_SUCCESS', payload: data });
+      lastErrorRef.current = null; // 성공 시 에러 상태 초기화
 
       // 필요시 캐시 저장
       if (shouldCache) {
@@ -136,18 +170,38 @@ export function useFetchData<Data, Params = void>({
       return data;
     } catch (error) {
       // 오류 처리
+      const shouldRetry = !(error instanceof Error && (error as any).shouldRetry === false);
+      const finalError = error instanceof Error ? error : new Error(String(error));
+      (finalError as any).shouldRetry = shouldRetry;
+
+      // 에러 상태 저장
+      lastErrorRef.current = {
+        error: finalError,
+        shouldRetry,
+      };
+
       dispatch({
         type: 'FETCH_ERROR',
-        payload: error instanceof Error ? error : new Error(String(error)),
+        payload: finalError,
       });
 
-      throw error;
+      if (!suspense && !shouldRetry) {
+        setError(finalError);
+      }
+
+      // shouldRetry가 false인 경우 주기적 갱신 중지
+      if (!shouldRetry && intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+
+      throw finalError; // Promise.reject 대신 직접 throw
     } finally {
       // 상태 정리
       isFetchingRef.current = false;
       fetchCache.deleteFetching(key);
     }
-  }, [key, shouldCache, dispatch]);
+  }, [key, shouldCache, dispatch, suspense, setError]);
 
   /**
    * 컴포넌트 마운트, 키 변경, 옵션 변경 시 데이터 로드 및 주기적 갱신 설정
@@ -155,14 +209,37 @@ export function useFetchData<Data, Params = void>({
   useEffect(() => {
     if (!enabled) return;
 
+    let isErrorWithNoRetry = false;
+
     // 초기 로드 - 캐시에 없는 경우만
     if (!hasCache(key)) {
-      fetchData();
+      fetchData().catch((error) => {
+        if (error instanceof Error && (error as any).shouldRetry === false) {
+          isErrorWithNoRetry = true;
+          if (!suspense) {
+            setError(error);
+          }
+        }
+      });
     }
 
-    // 주기적 갱신 설정
-    if (refetchInterval) {
-      intervalRef.current = setInterval(fetchData, refetchInterval);
+    // 주기적 갱신 설정 - 재시도하지 않아야 하는 에러가 아닌 경우에만
+    if (refetchInterval && !isErrorWithNoRetry) {
+      intervalRef.current = setInterval(() => {
+        try {
+          fetchData();
+        } catch (error) {
+          if (error instanceof Error && (error as any).shouldRetry === false) {
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
+            }
+            if (!suspense) {
+              setError(error);
+            }
+          }
+        }
+      }, refetchInterval);
     }
 
     // 클린업 함수
@@ -172,22 +249,32 @@ export function useFetchData<Data, Params = void>({
         intervalRef.current = null;
       }
     };
-  }, [enabled, refetchInterval, key, fetchData]);
+  }, [enabled, refetchInterval, key, fetchData, suspense, setError]);
 
   /**
    * 외부 refetch 트리거 처리
    */
   useEffect(() => {
     if (refetchKey && key.startsWith(refetchKey)) {
-      fetchData();
+      lastErrorRef.current = null;
+      try {
+        fetchData();
+      } catch (error) {
+        if (error instanceof Error && (error as any).shouldRetry === false) {
+          if (!suspense) {
+            setError(error);
+          }
+        }
+      }
     }
-  }, [refetchKey, key, fetchData]);
+  }, [refetchKey, key, fetchData, suspense, setError]);
 
   /**
    * 외부 reset 트리거 처리
    */
   useEffect(() => {
     if (resetKey && key.startsWith(resetKey)) {
+      lastErrorRef.current = null; // reset error state
       dispatch({ type: 'FETCH_RESET' });
       clearCache(key);
     }

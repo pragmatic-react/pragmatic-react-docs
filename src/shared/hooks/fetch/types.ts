@@ -50,6 +50,8 @@ export interface BaseResult {
   refetch: () => void;
   /** 상태를 초기화하는 함수 */
   reset: () => void;
+  /** 재시도 중인지 여부 */
+  isRetrying?: boolean;
 }
 
 /**

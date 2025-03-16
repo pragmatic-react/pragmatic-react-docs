@@ -68,13 +68,24 @@ export class Fetcher {
       const queryString = method === 'GET' ? this.buildQueryParams(options?.params) : '';
       const response = await fetch(`${this.baseURL}${url}${queryString}`, config);
 
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (!response.ok) {
+        const error = new Error(`HTTP error! Status: ${response.status}`);
+        if (response.status >= 400 && response.status < 500) {
+          (error as any).shouldRetry = false;
+        }
+        throw error;
+      }
 
       const jsonResponse: T = await response.json();
 
       return this.interceptors.response(jsonResponse);
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : String(error));
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const finalError = new Error(errorMessage);
+      if (error instanceof Error && (error as any).shouldRetry === false) {
+        (finalError as any).shouldRetry = false;
+      }
+      throw finalError;
     }
   }
 
