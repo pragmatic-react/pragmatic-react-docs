@@ -9,5 +9,6 @@ export const useGetUserInfo = () => {
       const data = await fetchUserInfo();
       return data;
     },
+    suspense: true,
   });
 };

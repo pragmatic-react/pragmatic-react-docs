@@ -11,5 +11,6 @@ export const useGetFavoriteRestaurantData = (category: Category | null) => {
       const data = await fetchFavoriteRestaurantData(params);
       return data;
     },
+    suspense: true,
   });
 };

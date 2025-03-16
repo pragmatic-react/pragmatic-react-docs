@@ -11,5 +11,6 @@ export const useGetRestaurantData = (category: Category | null) => {
       const data = await fetchRestaurantData(params);
       return data;
     },
+    suspense: true,
   });
 };
