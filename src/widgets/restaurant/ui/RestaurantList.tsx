@@ -2,13 +2,9 @@ import { Restaurant, RestaurantCard } from '@entities/restaurant';
 
 import { RestaurantSkeleton } from '@shared/ui';
 
-type Props = { data: Restaurant[]; isPending: boolean; handleCardClick: (restaurant: Restaurant) => () => void };
+type Props = { data: Restaurant[]; handleCardClick: (restaurant: Restaurant) => () => void };
 
-export const RestaurantList = ({ data, isPending, handleCardClick }: Props) => {
-  if (isPending) {
-    return <RestaurantSkeleton />;
-  }
-
+export const RestaurantList = ({ data, handleCardClick }: Props) => {
   return (
     <ul className="restaurant-list-container">
       {data?.map((restaurant) => (
