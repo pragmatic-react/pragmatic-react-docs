@@ -13,3 +13,15 @@ const getBaseUrl = () => {
 const BASE_URL = getBaseUrl();
 
 export const fetcher = new Fetcher().setBaseURL(BASE_URL);
+
+export const authFetcher = new Fetcher().setBaseURL(BASE_URL).setInterceptor('request', (config) => {
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return config;
+});
