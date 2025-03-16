@@ -1,21 +1,35 @@
-import React, { Component, PropsWithChildren, ReactNode } from 'react';
+import React, { Component, PropsWithChildren, ReactNode, createContext, useContext } from 'react';
 
 interface Props {
-  fallback?: ReactNode;
+  fallback?: ReactNode | ((props: { handleReset: () => void }) => ReactNode);
+  onReset?: () => void;
 }
 
 interface State {
   hasError: boolean;
+  error?: Error;
 }
 
-class ErrorBoundary extends Component<PropsWithChildren<Props>, State> {
+interface ErrorBoundaryContextType {
+  setError: (error: Error) => void;
+}
+
+const ErrorBoundaryContext = createContext<ErrorBoundaryContextType>({
+  setError: () => {},
+});
+
+export const useErrorBoundary = () => {
+  return useContext(ErrorBoundaryContext);
+};
+
+export class ErrorBoundary extends Component<PropsWithChildren<Props>, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: Error): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -23,25 +37,38 @@ class ErrorBoundary extends Component<PropsWithChildren<Props>, State> {
   }
 
   handleReset = () => {
-    this.setState({ hasError: false });
+    this.setState({ hasError: false, error: undefined });
+    if (this.props.onReset) {
+      this.props.onReset();
+    }
+  };
+
+  setError = (error: Error) => {
+    this.setState({ hasError: true, error });
   };
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback ? (
-        this.props.fallback
-      ) : (
-        <div className="flex flex-col gap-4">
-          <h2>불러오는 중 오류가 발생했습니다</h2>
-          <button onClick={this.handleReset} className="button--primary">
-            다시 시도
-          </button>
-        </div>
+      if (typeof this.props.fallback === 'function') {
+        return this.props.fallback({ handleReset: this.handleReset });
+      }
+      return (
+        this.props.fallback || (
+          <div className="flex flex-col gap-4">
+            <h2>불러오는 중 오류가 발생했습니다</h2>
+            <p className="text-sm text-gray-600">{this.state.error?.message || '알 수 없는 오류가 발생했습니다.'}</p>
+            <button onClick={this.handleReset} className="button--primary">
+              다시 시도
+            </button>
+          </div>
+        )
       );
     }
 
-    return this.props.children;
+    return (
+      <ErrorBoundaryContext.Provider value={{ setError: this.setError }}>
+        {this.props.children}
+      </ErrorBoundaryContext.Provider>
+    );
   }
 }
-
-export default ErrorBoundary;
