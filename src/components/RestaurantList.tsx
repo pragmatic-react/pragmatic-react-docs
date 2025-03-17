@@ -65,11 +65,13 @@ function RestaurantList({
         </ul>
       </section>
 
-      <RestaurantDetailModal
-        selectedRestaurant={selectedRestaurant}
-        isOpen={!!selectedRestaurant}
-        onClose={() => setSelectedRestaurant(null)}
-      />
+      {selectedRestaurant && (
+        <RestaurantDetailModal
+          selectedRestaurant={selectedRestaurant}
+          isOpen={!!selectedRestaurant}
+          onClose={() => setSelectedRestaurant(null)}
+        />
+      )}
     </>
   );
 }
