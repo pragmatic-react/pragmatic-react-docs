@@ -1,5 +1,4 @@
 import { useState } from "react";
-import useRestaurants from "../hooks/useRestaurants";
 import AddRestaurantModal from "../components/Restaurants/AddRestaurantModal";
 
 const Header = () => {

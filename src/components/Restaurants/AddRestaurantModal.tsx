@@ -1,5 +1,5 @@
 import { Modal, ModalContextType } from "../../UI/Modal";
-import useRestaurants from "../../hooks/useRestaurants";
+import useAddRestaurant from "../../hooks/useAddRestaurant";
 import {
   Restaurant as RestaurantType,
   RestaurantSubmitType,
@@ -14,12 +14,13 @@ const testData: RestaurantSubmitType = {
 };
 
 const AddRestaurantForm = ({ onClose }) => {
-  const { addRestaurant } = useRestaurants();
+  const { addRestaurant } = useAddRestaurant();
 
   const onSubmit = async () => {
     await addRestaurant(testData);
     onClose();
   };
+
   return (
     <form>
       <div className="form-item form-item--required">

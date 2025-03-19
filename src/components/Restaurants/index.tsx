@@ -1,5 +1,5 @@
-import { useState } from "react";
-import useRestaurants from "../../hooks/useRestaurants";
+import { Suspense, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Restaurant as RestaurantType } from "../../models";
 import RestaurantInfoModal, {
   RestaurantModalData,
@@ -8,7 +8,6 @@ import RestaurantList from "./RestaurantList";
 import Section from "../../UI/Section";
 
 const RestaurantSection = () => {
-  const { restaurants } = useRestaurants();
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false);
   const [modalData, setModalData] = useState<RestaurantModalData>({
     name: "",
@@ -29,10 +28,11 @@ const RestaurantSection = () => {
 
   return (
     <Section className="restaurant-list-container">
-      <RestaurantList
-        data={restaurants}
-        openRestaurantModal={openRestaurantInfoModal}
-      />
+      <ErrorBoundary fallback={<p>리스트 조회 중 오류가 발생하였습니다.</p>}>
+        <Suspense fallback={<p>로딩중</p>}>
+          <RestaurantList openRestaurantModal={openRestaurantInfoModal} />
+        </Suspense>
+      </ErrorBoundary>
       <RestaurantInfoModal
         title={modalData.name}
         isOpen={infoModalOpen}

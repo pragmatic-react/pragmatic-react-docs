@@ -3,13 +3,17 @@ const DEFAULT_HEADERS = {
   "Content-Type": "application/json",
 };
 
-const fetchWithTimeout = (
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const fetchWithTimeout = async (
   url: string,
   options: RequestInit,
   timeout = 10000000
 ) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  // await delay(3000);
 
   return fetch(url, { ...options, signal: controller.signal })
     .then((response) => response.json())
@@ -31,17 +35,10 @@ const fetchAPI = async <T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> => {
-  try {
-    const response = await fetchWithTimeout(`${BASE_URL}/${url}`, {
-      headers: { ...DEFAULT_HEADERS, ...options.headers },
-      ...options,
-    });
-
-    return response;
-  } catch (error) {
-    console.error(`API 요청 실패: ${url}`, error);
-    throw error;
-  }
+  return fetchWithTimeout(`${BASE_URL}/${url}`, {
+    headers: { ...DEFAULT_HEADERS, ...options.headers },
+    ...options,
+  });
 };
 
 const get = <T>(url: string) => {
