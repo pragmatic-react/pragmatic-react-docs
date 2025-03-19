@@ -1,30 +1,63 @@
 import { useEffect, useState } from "react";
-import { Restaurant } from "../models";
+import { Restaurant, RestaurantSubmitType } from "../models";
+import { useFetch, useMutation } from "../utils/FetchCacheManager";
+import https from "../utils/https";
 
 const useRestaurants = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>();
+  // const userInfo = (useSelector((state: RootState) => state.login) || {}) as ILoginStore;
+
+  // const { data: starredRestaurants, reload: getStarredRestaurants } = useFetch<
+  //   Restaurant[]
+  // >(`starredRestaurants?userId=${userId}`);
+
+  const { data: generalRestaurants, reload: getRestaurants } =
+    useFetch<Restaurant[]>("restaurants");
+
+  const [restaurants, setRestaurant] = useState<Restaurant[]>([]);
+
+  // 가게 등록
+  const { mutate } = useMutation<Restaurant[]>({
+    mutationKey: "restaurants",
+    mutationFn: (restaurant: RestaurantSubmitType) => {
+      https.post("/restaurants", restaurant);
+    },
+    onSuccess: () => {
+      getRestaurants();
+    },
+    onError: (error) => {
+      console.error("가게 등록 에러", error);
+    },
+  });
 
   useEffect(() => {
-    const fetchRetaurants = async () => {
-      const response = await fetch("./db.json");
-      const data = await response.json();
-      const restaurantData = data["restaurants"] as Restaurant[];
-      const restaurants = restaurantData.map(
-        (data) =>
-          new Restaurant(data.id, data.name, data.description, data.category)
-      );
-      setRestaurants(restaurants);
-    };
+    setRestaurant(
+      generalRestaurants?.map(
+        (restaurant) =>
+          new Restaurant(
+            restaurant.id,
+            restaurant.name,
+            restaurant.description,
+            restaurant.category
+          )
+      ) ?? []
+    );
+  }, [generalRestaurants]);
 
-    try {
-      fetchRetaurants();
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+  const addRestaurant = async (restaurant: RestaurantSubmitType) => {
+    mutate(restaurant);
+  };
+
+  // const getRecommendMenus = async (restaurant: RestaurantSubmitType) => {
+  //   const recommendMenus = fetchRecommendMenus(restaurant.name);
+  //   return recommendMenus;
+  // };
 
   return {
     restaurants,
+    addRestaurant,
+    // getRecommendMenus,
+    // recommends,
+    // recommendMenuError,
   };
 };
 export default useRestaurants;

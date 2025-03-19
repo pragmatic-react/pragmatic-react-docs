@@ -9,14 +9,13 @@ const Restaurant = ({
 }) => {
   const onClickRestaurant = () => {
     onClick(restaurant);
-    console.log("restaurant", restaurant);
   };
 
   return (
     <li className="restaurant" onClick={onClickRestaurant}>
       <div className="restaurant__category">
         <img
-          src={restaurant.getCategoryImgSrc()}
+          src={restaurant.categoryImgSrc}
           alt={restaurant.category}
           className="category-icon"
         />
