@@ -1,7 +1,6 @@
 import { Restaurant } from "../types/restaurant";
 import { addRestaurant } from "../api/restaurant";
 import { useRestaurantContext } from "../context/useRestaurantContext";
-import { ERROR_MESSAGES } from "../api/baseApi";
 
 export const useAddRestaurant = () => {
   const { isError, setIsError, setErrorMessage, errorMessage, setRestaurants } =
@@ -16,7 +15,7 @@ export const useAddRestaurant = () => {
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage(ERROR_MESSAGES.UNKNOWN_ERROR);
+        // setErrorMessage(ERROR_MESSAGES.UNKNOWN_ERROR);
       }
       setIsError(true);
       // TODO: 에러 메세지가 반영되지 않아서 추가된 로직으로 개선 필요.
