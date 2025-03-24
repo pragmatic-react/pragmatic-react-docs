@@ -13,6 +13,8 @@
 
     /* Type Checking */
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    /* Prevent emitting output files */
+    "noEmit": true
   }
 }
