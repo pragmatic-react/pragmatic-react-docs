@@ -14,13 +14,14 @@ import { Restaurant } from "../types/restaurant";
 import RestaurantDetailModal from "./RestaurantDetailModal";
 import useFetch from "../hooks/useFetch";
 import { fetchRestaurants } from "../api/restaurant";
+import { useGlobalContext } from "../context/useGlobalContext";
 
 function RestaurantList({
   selectedCategory,
 }: {
   selectedCategory: CategorySelectList;
 }) {
-  const { data: restaurants } = useFetch({
+  const { data: restaurants = [] } = useFetch({
     apiKey: "restaurants",
     fn: fetchRestaurants,
   });
@@ -28,7 +29,7 @@ function RestaurantList({
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
 
-  if (restaurants.length === 0) return <div>No restaurants available</div>;
+  if (restaurants?.length === 0) return <div>No restaurants available</div>;
 
   const filteredRestaurants =
     selectedCategory === "전체"

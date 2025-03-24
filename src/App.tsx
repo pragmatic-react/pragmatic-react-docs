@@ -6,9 +6,9 @@ import CategoryFilter from "./components/CategoryFilter";
 import { CategorySelectList } from "./types/restaurant";
 
 const RestaurantList = lazy(() => import("./components/RestaurantList"));
-import { RestaurantProvider } from "./RestaurantProvider";
 import ApiErrorBoundary from "./errors/boundaries/ApiErrorBoundary";
 import GlobalErrorBoundary from "./errors/boundaries/GlobalErrorBoundary";
+import { GlobalProvider } from "./GlobalProvider";
 
 function App() {
   const [selectedCategory, setSelectedCategory] =
@@ -16,7 +16,7 @@ function App() {
 
   return (
     <GlobalErrorBoundary>
-      <RestaurantProvider>
+      <GlobalProvider>
         <Header />
 
         <main>
@@ -31,7 +31,7 @@ function App() {
             </Suspense>
           </ApiErrorBoundary>
         </main>
-      </RestaurantProvider>
+      </GlobalProvider>
     </GlobalErrorBoundary>
   );
 }

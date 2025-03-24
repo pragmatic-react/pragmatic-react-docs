@@ -1,7 +1,9 @@
 import { FormEvent, useState } from "react";
 import Modal from "./Modal";
 import { Category } from "../types/restaurant";
-import { useAddRestaurant } from "../hooks/useAddRestaurant";
+import { addRestaurant, fetchRestaurants } from "../api/restaurant";
+import useFetch from "../hooks/useFetch";
+import useMutation from "../hooks/useMutation";
 import ErrorMessage from "./ErrorMessage";
 
 function AddRestaurantModal({
@@ -14,7 +16,20 @@ function AddRestaurantModal({
   const [category, setCategory] = useState<Category | "">("");
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addNewRestaurant, errorMessage, isError } = useAddRestaurant();
+
+  const {
+    mutate: addNewRestaurant,
+    isError,
+    errorMessage,
+  } = useMutation({
+    fn: addRestaurant,
+  });
+
+  const { refetch: refetchRestaurants } = useFetch({
+    apiKey: "restaurants",
+    fn: fetchRestaurants,
+    enabled: false,
+  });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     if (!isFormValid) return;
@@ -34,7 +49,10 @@ function AddRestaurantModal({
 
     try {
       await addNewRestaurant(newRestaurant);
+      refetchRestaurants();
       onClose();
+    } catch (error) {
+      console.error("Failed to add new restaurant:", error);
     } finally {
       setIsSubmitting(false);
     }
