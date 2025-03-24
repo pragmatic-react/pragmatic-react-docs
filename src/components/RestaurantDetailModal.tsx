@@ -1,11 +1,22 @@
+import { Restaurant } from "../types/restaurant";
 import Modal from "./Modal";
 
-function RestaurantDetailModal({ selectedRestaurant, onClose, open }) {
+interface RestaurantDetailModalProps {
+  selectedRestaurant: Restaurant | null;
+  onClose: () => void;
+  isOpen: boolean;
+}
+
+function RestaurantDetailModal({
+  selectedRestaurant,
+  onClose,
+  isOpen,
+}: RestaurantDetailModalProps) {
   if (!selectedRestaurant) return null;
 
   const { name, description } = selectedRestaurant;
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <Modal.Header>
         <Modal.Title>{name}</Modal.Title>
       </Modal.Header>
@@ -20,7 +31,7 @@ function RestaurantDetailModal({ selectedRestaurant, onClose, open }) {
 
       <Modal.Footer>
         <Modal.ButtonContainer>
-          <Modal.Button>닫기</Modal.Button>
+          <Modal.Button onClick={onClose}>닫기</Modal.Button>
         </Modal.ButtonContainer>
       </Modal.Footer>
     </Modal>

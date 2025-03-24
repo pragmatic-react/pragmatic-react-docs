@@ -1,3 +1,4 @@
+import { PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 
 import Title from "./Title";
@@ -11,14 +12,19 @@ import useBodyOverflowHidden from "./hooks/useBodyOverflowHidden";
 import useKeyDown from "./hooks/useKeyDown";
 import { ModalContext } from "./hooks/useModal";
 
-function Modal({ open, onClose, children }) {
+interface ModalProps extends PropsWithChildren {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function Modal({ isOpen, onClose, children }: ModalProps) {
   useKeyDown("Escape", onClose);
   useBodyOverflowHidden();
 
-  if (!open) return null;
+  if (!isOpen) return null;
 
   return createPortal(
-    <ModalContext.Provider value={{ open, onClose }}>
+    <ModalContext.Provider value={{ isOpen, onClose }}>
       <div className="modal modal--open">
         <div className="modal-backdrop" onClick={onClose}></div>
 

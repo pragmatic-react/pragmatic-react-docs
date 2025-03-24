@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-const useKeyDown = (key, onClose) => {
+const useKeyDown = (key: KeyboardEvent["key"], onClose: () => void) => {
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === key) onClose();
     };
 
