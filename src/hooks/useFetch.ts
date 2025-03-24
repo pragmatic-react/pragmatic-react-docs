@@ -14,7 +14,7 @@ const useFetch = <T, P>({
   enabled?: boolean;
 }) => {
   const [error, setError] = useState<null | Error>(null);
-  const { data, setData } = useGlobalContext<T[]>();
+  const { data, setData } = useGlobalContext<T>();
 
   const fetch = async (params?: P) => {
     setError(null);

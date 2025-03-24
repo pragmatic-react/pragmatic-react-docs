@@ -14,7 +14,6 @@ import { Restaurant } from "../types/restaurant";
 import RestaurantDetailModal from "./RestaurantDetailModal";
 import useFetch from "../hooks/useFetch";
 import { fetchRestaurants } from "../api/restaurant";
-import { useGlobalContext } from "../context/useGlobalContext";
 
 function RestaurantList({
   selectedCategory,
