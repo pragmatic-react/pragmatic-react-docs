@@ -1,5 +1,5 @@
+import Container from ".";
 import "./App.css";
-import Container from "./index";
 
 function App() {
   return <Container />;

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 import { Root, Title, Description, ButtonContainer } from "./pieces";
 
@@ -6,8 +6,17 @@ import { Root, Title, Description, ButtonContainer } from "./pieces";
 const TABBABLE_TAGS =
   'a, input, select, button, textarea, details, [href], [tabindex]:not([tabindex="-1"])';
 
-export default function Modal({ children, isOpen, onClose }) {
-  const ref = useRef(null);
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function Modal({
+  children,
+  isOpen,
+  onClose,
+}: PropsWithChildren<ModalProps>) {
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen || !ref.current) return;
@@ -22,10 +31,11 @@ export default function Modal({ children, isOpen, onClose }) {
     document.body.setAttribute("aria-hidden", "true");
 
     // Tab 키로 포커스 순환
-    function handleKeyDownTab(e) {
+    function handleKeyDownTab(e: KeyboardEvent) {
       if (e.key !== "Tab") return;
 
-      const tabbableElements = ref.current.querySelectorAll(TABBABLE_TAGS); // 모달 내 탭 키로 포커스 가능한 요소
+      const tabbableElements =
+        ref.current!.querySelectorAll<HTMLElement>(TABBABLE_TAGS);
       const firstElement = tabbableElements[0]; // 첫번 째 요소
       const lastElement = tabbableElements[tabbableElements.length - 1]; // 마지막 요소
 
@@ -64,7 +74,7 @@ export default function Modal({ children, isOpen, onClose }) {
 
   if (!isOpen) return null;
   return createPortal(
-    <div aria-modal={isOpen} role="dialog" ref={ref} tabIndex="-1">
+    <div aria-modal={isOpen} role="dialog" ref={ref} tabIndex={-1}>
       {children}
     </div>,
     document.body
