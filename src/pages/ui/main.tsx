@@ -1,12 +1,12 @@
 import { Suspense, useState } from 'react';
 
 import { AppHeader } from '@widgets/layout';
-import { RestaurantDetailDrawer, RestaurantListWidget } from '@widgets/restaurant';
+import { RestaurantListWidget } from '@widgets/restaurant';
 
 import { ModalProvider } from '@features/modal';
 import { CategorySelect } from '@features/restaurant';
 
-import { Category, Restaurant } from '@entities/restaurant';
+import { Category } from '@entities/restaurant';
 
 import { ErrorBoundary, RestaurantSkeleton } from '@shared/ui';
 
