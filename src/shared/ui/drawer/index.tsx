@@ -65,10 +65,6 @@ export const Drawer = ({ isOpen, onClose, children, closeOnEsc = true }: DrawerP
     return clearTimeoutSafely;
   }, [isOpen]);
 
-  if (!isOpen && !isVisible && !dialogRef.current?.open) {
-    return null;
-  }
-
   return createPortal(
     <dialog ref={dialogRef} className="fixed inset-0 z-50 bg-transparent" onCancel={(e) => e.preventDefault()}>
       {/* Backdrop */}
@@ -90,3 +86,11 @@ export const Drawer = ({ isOpen, onClose, children, closeOnEsc = true }: DrawerP
     document.body,
   );
 };
+
+/** Modal 관련 추가 구현해볼 부분
+ * Modal.Root -> 바운더리 설정
+ * Modal.Trigger -> 바운더리 내 설정된 모달 호출
+ * ㄴ radix ui asChild 예제 참고
+ * Modal.Content -> 모달 내용 설정
+ * Modal.Close
+ */
