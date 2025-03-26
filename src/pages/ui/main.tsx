@@ -1,21 +1,13 @@
 import { Suspense, useState } from 'react';
 
 import { AppHeader } from '@widgets/layout';
-import { RestaurantDetailDrawer, RestaurantList, RestaurantListWidget } from '@widgets/restaurant';
+import { RestaurantDetailDrawer, RestaurantListWidget } from '@widgets/restaurant';
 
 import { ModalProvider } from '@features/modal';
 import { CategorySelect } from '@features/restaurant';
 
-import {
-  Category,
-  Restaurant,
-  fetchRestaurantData,
-  useGetFavoriteRestaurantData,
-  useGetRestaurantData,
-} from '@entities/restaurant';
-import { useGetUserInfo } from '@entities/user';
+import { Category, Restaurant } from '@entities/restaurant';
 
-import { useModalState } from '@shared/hooks';
 import { ErrorBoundary, RestaurantSkeleton } from '@shared/ui';
 
 interface State {
@@ -28,12 +20,6 @@ export const MainPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
 
   const [selected, setSelected] = useState<Restaurant | null>(null);
-  const { openModal } = useModalState();
-
-  const handleCardClick = (restaurant: Restaurant) => () => {
-    setSelected(restaurant);
-    openModal();
-  };
 
   return (
     <div>
@@ -45,7 +31,6 @@ export const MainPage = () => {
         </section>
 
         <section>
-          {/* TODO: useFetchData에서 발생하는 에러 ErrorBoundary로 처리, fetching 로직 컴포넌트 분리 */}
           <ModalProvider>
             <ErrorBoundary
               fallback={({ handleReset }) => (
@@ -59,7 +44,7 @@ export const MainPage = () => {
               )}
             >
               <Suspense fallback={<RestaurantSkeleton />}>
-                <RestaurantListWidget category={category} handleCardClick={handleCardClick} />
+                <RestaurantListWidget category={category} setSelected={setSelected} />
               </Suspense>
             </ErrorBoundary>
 

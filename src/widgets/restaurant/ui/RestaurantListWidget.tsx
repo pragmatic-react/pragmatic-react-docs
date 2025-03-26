@@ -1,3 +1,5 @@
+import { useModal } from '@features/modal';
+
 import { Category, Restaurant, useGetFavoriteRestaurantData, useGetRestaurantData } from '@entities/restaurant';
 import { useGetUserInfo } from '@entities/user';
 
@@ -5,14 +7,18 @@ import { RestaurantList } from './RestaurantList';
 
 export const RestaurantListWidget = ({
   category,
-  handleCardClick,
+  setSelected,
 }: {
   category: Category | null;
-  handleCardClick: (restaurant: Restaurant) => () => void;
+  setSelected: (restaurant: Restaurant) => void;
 }) => {
   const { data: restaurantList } = useGetRestaurantData(category);
-  useGetFavoriteRestaurantData(category);
-  useGetUserInfo();
+  const { openModal } = useModal();
+
+  const handleCardClick = (restaurant: Restaurant) => () => {
+    setSelected(restaurant);
+    openModal();
+  };
 
   return (
     <div>
