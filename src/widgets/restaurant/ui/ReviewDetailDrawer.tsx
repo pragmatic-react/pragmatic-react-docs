@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Review } from '@entities/restaurant';
 
-import { Drawer } from '@shared/ui';
+import { Button, Drawer } from '@shared/ui';
 
 type Props = {
   isOpen: boolean;
@@ -27,9 +27,9 @@ export const ReviewDetailDrawer = ({ isOpen, onClose, review }: Props) => {
           <p>{review?.date}</p>
         </div>
 
-        <button className="button--primary text-caption button" type="button" onClick={onClose}>
+        <Button type="button" onClick={onClose}>
           닫기
-        </button>
+        </Button>
       </div>
     </Drawer>
   );

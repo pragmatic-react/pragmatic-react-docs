@@ -4,7 +4,7 @@ import { AddRestaurantData, CATEGORY_OPTIONS, addRestaurantData } from '@entitie
 
 import { useMutation } from '@shared/hooks';
 import { useFetchContext } from '@shared/providers';
-import { Drawer } from '@shared/ui';
+import { Button, Drawer } from '@shared/ui';
 
 type Props = {
   isOpen: boolean;
@@ -98,13 +98,9 @@ export const AddRestaurantModal = ({ isOpen, onClose }: Props) => {
         </div>
 
         <div className="button-container">
-          <button
-            className={`button ${isDisabled ? 'button--disabled' : 'button--primary'} text-caption`}
-            type="submit"
-            disabled={isDisabled || isLoading}
-          >
+          <Button type="submit" disabled={isDisabled || isLoading}>
             {isLoading ? '추가중...' : '추가하기'}
-          </button>
+          </Button>
         </div>
       </form>
     </Drawer>

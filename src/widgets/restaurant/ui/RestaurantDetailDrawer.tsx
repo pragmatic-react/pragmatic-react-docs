@@ -5,7 +5,7 @@ import { useModal } from '@features/modal';
 import { Restaurant, RestaurantIcon, Review } from '@entities/restaurant';
 
 import { useModalState } from '@shared/hooks';
-import { Drawer } from '@shared/ui';
+import { Button, Drawer } from '@shared/ui';
 
 import { ReviewDetailDrawer } from './ReviewDetailDrawer';
 
@@ -18,7 +18,7 @@ const Inner = (props: Restaurant) => {
   const { isOpen, openModal, closeModal } = useModalState();
   const [review, setReview] = useState<Review | null>(null);
 
-  const handleMoreButonClick = (review: Review) => () => {
+  const handleMoreButtonClick = (review: Review) => () => {
     setReview(review);
     openModal();
   };
@@ -42,9 +42,9 @@ const Inner = (props: Restaurant) => {
                 className="flex w-full items-center justify-between border-b-[1px] border-gray-400 py-2"
               >
                 <p className="w-[calc(100%-100px)] truncate">{review.content}</p>
-                <button className="button--primary rounded-sm px-2 py-1" onClick={handleMoreButonClick(review)}>
+                <Button className="!w-fit px-2 py-1" onClick={handleMoreButtonClick(review)}>
                   자세히 보기
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
