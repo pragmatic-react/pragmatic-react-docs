@@ -1,9 +1,10 @@
 import { type FormEvent, type ReactNode, createContext, useContext, useRef, useState } from 'react';
 
+import { cn } from '@shared/utils';
+
 import { Button } from '../button';
 
 interface FormContextValue {
-  formName: string;
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onReset: () => void;
   errors: Record<string, string>;
@@ -16,10 +17,9 @@ interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   children: ReactNode;
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onReset?: () => void;
-  formName: string;
 }
 
-export const Form = ({ children, onSubmit, onReset, formName, ...props }: FormProps) => {
+export const Form = ({ children, onSubmit, onReset, name, ...props }: FormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -32,7 +32,7 @@ export const Form = ({ children, onSubmit, onReset, formName, ...props }: FormPr
   };
 
   const value = {
-    formName,
+    name,
     onSubmit,
     onReset: handleReset,
     errors,
@@ -41,7 +41,7 @@ export const Form = ({ children, onSubmit, onReset, formName, ...props }: FormPr
 
   return (
     <FormContext.Provider value={value}>
-      <form ref={formRef} onSubmit={onSubmit} name={formName} role="form" aria-label={formName} {...props}>
+      <form ref={formRef} onSubmit={onSubmit} name={name} id={name} role="form" aria-label={name} {...props}>
         {children}
       </form>
     </FormContext.Provider>
@@ -65,11 +65,10 @@ export const FormItem = ({ children, name, label, required, error }: FormItemPro
   const hasError = error || context.errors[name];
 
   return (
-    <div className="form-item">
+    <div className={cn('form-item', required && 'form-item--required', hasError && 'form-item--error')}>
       {label && (
         <label htmlFor={name} className="text-caption">
           {label}
-          {required && <span className="required">*</span>}
         </label>
       )}
       {children}
@@ -94,9 +93,9 @@ export const FormSubmit = ({ children, disabled }: FormSubmitProps) => {
   }
 
   return (
-    <button type="submit" disabled={disabled} aria-label="폼 제출">
+    <Button type="submit" disabled={disabled} aria-label="폼 제출">
       {children}
-    </button>
+    </Button>
   );
 };
 

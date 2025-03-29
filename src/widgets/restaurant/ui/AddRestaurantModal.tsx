@@ -4,7 +4,7 @@ import { AddRestaurantData, CATEGORY_OPTIONS, addRestaurantData } from '@entitie
 
 import { useMutation } from '@shared/hooks';
 import { useFetchContext } from '@shared/providers';
-import { Button, Drawer } from '@shared/ui';
+import { Drawer, Form } from '@shared/ui';
 
 type Props = {
   isOpen: boolean;
@@ -62,11 +62,8 @@ export const AddRestaurantModal = ({ isOpen, onClose }: Props) => {
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
       <h2 className="modal-title text-title">새로운 음식점</h2>
-      <form onSubmit={handleSubmit} id="add-restaurant-form">
-        <div className="form-item form-item--required">
-          <label htmlFor="category" className="text-caption">
-            카테고리
-          </label>
+      <Form name="add-restaurant-form" onSubmit={handleSubmit} onReset={onClose}>
+        <Form.Item name="category" label="카테고리" required>
           <select name="category" id="category" required onChange={handleChange('category')}>
             {CATEGORY_OPTIONS.map((option) => (
               <option key={option.value ?? 'default'} value={option.value}>
@@ -74,35 +71,24 @@ export const AddRestaurantModal = ({ isOpen, onClose }: Props) => {
               </option>
             ))}
           </select>
-        </div>
+        </Form.Item>
 
-        <div className="form-item form-item--required">
-          <label htmlFor="name" className="text-caption">
-            이름
-          </label>
+        <Form.Item name="name" label="이름" required>
           <input type="text" name="name" id="name" required onChange={handleChange('name')} />
-        </div>
+        </Form.Item>
 
-        <div className="form-item">
-          <label htmlFor="description" className="text-caption">
-            설명
-          </label>
-          <textarea
-            name="description"
-            id="description"
-            cols={30}
-            rows={5}
-            onChange={handleChange('description')}
-          ></textarea>
+        <Form.Item name="description" label="설명">
+          <textarea name="description" id="description" cols={30} rows={5} onChange={handleChange('description')} />
+
           <span className="help-text text-caption">메뉴 등 추가 정보를 입력해 주세요.</span>
-        </div>
+        </Form.Item>
 
         <div className="button-container">
-          <Button type="submit" disabled={isDisabled || isLoading}>
-            {isLoading ? '추가중...' : '추가하기'}
-          </Button>
+          <Form.Reset disabled={isLoading}>취소</Form.Reset>
+
+          <Form.Submit disabled={isDisabled || isLoading}>{isLoading ? '추가중...' : '추가하기'}</Form.Submit>
         </div>
-      </form>
+      </Form>
     </Drawer>
   );
 };
