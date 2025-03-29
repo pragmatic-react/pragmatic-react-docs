@@ -13,7 +13,7 @@ const fetchWithTimeout = async (
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-  // await delay(3000);
+  await delay(3000);
 
   return fetch(url, { ...options, signal: controller.signal })
     .then((response) => response.json())
