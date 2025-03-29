@@ -1,10 +1,10 @@
 import { FormEvent, useState } from "react";
 import Modal from "./Modal";
-import { Category } from "../types/restaurant";
 import { addRestaurant, fetchRestaurants } from "../api/restaurant";
 import useFetch from "../hooks/useFetch";
 import useMutation from "../hooks/useMutation";
 import ErrorMessage from "./ErrorMessage";
+import useForm from "../hooks/useForm";
 
 function AddRestaurantModal({
   isOpen,
@@ -13,8 +13,6 @@ function AddRestaurantModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const [category, setCategory] = useState<Category | "">("");
-  const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -31,24 +29,27 @@ function AddRestaurantModal({
     enabled: false,
   });
 
+  const { register, errors } = useForm<"name" | "category" | "description">();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    if (!isFormValid) return;
+    // if (!isFormValid) return;
 
     e.preventDefault();
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
     const description = formData.get("description") as string;
+    console.log("name data", formData.get("name"));
 
     const newRestaurant = {
       id: new Date().toISOString(),
-      category,
+      // category,
       name,
       description,
     };
 
     try {
-      await addNewRestaurant(newRestaurant);
+      await addNewRestaurant(newRestaurant as any);
       refetchRestaurants();
       onClose();
     } catch (error) {
@@ -58,8 +59,8 @@ function AddRestaurantModal({
     }
   };
 
-  // TODO: 추후 validation 로직 추가
-  const isFormValid = category !== "" && name !== "";
+  // // TODO: 추후 validation 로직 추가
+  // const isFormValid = category !== "" && name !== "";
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -76,8 +77,7 @@ function AddRestaurantModal({
             <select
               name="category"
               id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value as Category)}
+              {...register("category")}
               required
             >
               <option value="">선택해 주세요</option>
@@ -88,18 +88,26 @@ function AddRestaurantModal({
               <option value="아시안">아시안</option>
               <option value="기타">기타</option>
             </select>
+            {errors.category && (
+              <ErrorMessage>카테고리를 확인해 주세요.</ErrorMessage>
+            )}
           </div>
+
           <div className="form-item form-item--required">
             <label htmlFor="name text-caption">이름</label>
             <input
               type="text"
               name="name"
               id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              {...register("name", {
+                validate: (value: string) => value.length < 10,
+              })}
               required
             />
+
+            {errors.name && <ErrorMessage>이름을 확인해 주세요.</ErrorMessage>}
           </div>
+
           <div className="form-item">
             <label htmlFor="description text-caption">설명</label>
             <textarea
@@ -107,17 +115,25 @@ function AddRestaurantModal({
               id="description"
               cols={30}
               rows={5}
+              {...register("description", {
+                validate: (value: string) => value.length > 20,
+              })}
             ></textarea>
+
             <span className="help-text text-caption">
               메뉴 등 추가 정보를 입력해 주세요.
             </span>
+
+            {errors.description && (
+              <ErrorMessage>20자 이상 입력해 주세요.</ErrorMessage>
+            )}
           </div>
 
           <Modal.Footer>
             <Modal.ButtonContainer>
               <Modal.Button
                 type="submit"
-                disabled={!isFormValid || isSubmitting || isError}
+                // disabled={!isFormValid || isSubmitting || isError}
               >
                 {isSubmitting ? "추가 중..." : "추가하기"}
               </Modal.Button>
