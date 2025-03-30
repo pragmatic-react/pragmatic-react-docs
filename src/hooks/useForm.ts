@@ -1,13 +1,13 @@
 import { FormEvent, RefObject, useRef, useState } from "react";
 
 interface Options<T> {
-  validate?: (value: T) => boolean;
+  validate?: (value: T) => string | undefined; // undefined는 validate 통과한 상태
   initialValue?: T;
 }
 
 const useForm = <TFields extends string>() => {
   const fields = new Map<TFields, RefObject<any>>();
-  const [errors, setErrors] = useState<Partial<Record<TFields, boolean>>>({});
+  const [errors, setErrors] = useState<Partial<Record<TFields, string>>>({});
 
   const register = <T>(field: TFields, options?: Options<T>) => {
     if (!fields.has(field)) {
@@ -17,11 +17,11 @@ const useForm = <TFields extends string>() => {
     const validateField = () => {
       const ref = fields.get(field);
       if (ref?.current && options?.validate) {
-        const isValid = options.validate(ref.current.value);
+        const errorMessage = options.validate(ref.current.value);
 
         setErrors((prev) => ({
           ...prev,
-          [field]: !isValid,
+          [field]: errorMessage,
         }));
       }
     };

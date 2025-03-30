@@ -73,7 +73,9 @@ function AddRestaurantModal({
               name="category"
               id="category"
               {...register("category", {
-                validate: (value: string) => value !== "",
+                validate: (value: string) => {
+                  if (value === "") return "카테고리를 선택해 주세요.";
+                },
               })}
               required
             >
@@ -86,9 +88,7 @@ function AddRestaurantModal({
               <option value="기타">기타</option>
             </select>
 
-            {errors.category && (
-              <ErrorMessage>카테고리를 선택해 주세요.</ErrorMessage>
-            )}
+            {errors.category && <ErrorMessage>{errors.category}</ErrorMessage>}
           </div>
 
           <div className="form-item form-item--required">
@@ -98,12 +98,13 @@ function AddRestaurantModal({
               name="name"
               id="name"
               {...register("name", {
-                validate: (value: string) => value.length < 10,
+                validate: (value: string) => {
+                  if (value.length < 10) return "10자 이상 입력해 주세요.";
+                },
               })}
-              required
             />
 
-            {errors.name && <ErrorMessage>이름을 확인해 주세요.</ErrorMessage>}
+            {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
           </div>
 
           <div className="form-item">
@@ -121,7 +122,7 @@ function AddRestaurantModal({
             </span>
 
             {errors.description && (
-              <ErrorMessage>20자 이상 입력해 주세요.</ErrorMessage>
+              <ErrorMessage>{errors.description}</ErrorMessage>
             )}
           </div>
 
