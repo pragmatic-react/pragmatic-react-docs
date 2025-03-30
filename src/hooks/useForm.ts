@@ -75,7 +75,8 @@ const useForm = <TFields extends string>() => {
       const ref = fields.get(field);
       const options = fieldOptions.get(field);
       if (options?.isRequired) {
-        return ref?.current?.value.trim() !== "" && !errors[field];
+        const value = ref?.current?.value.trim() || "";
+        return value !== "" && !errors[field];
       }
       return true;
     });
