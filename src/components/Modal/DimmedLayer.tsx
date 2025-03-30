@@ -10,7 +10,7 @@ function DimmedLayer({ children, onClick, className, ...props }: DimmedLayerProp
       className='z-overlay fixed top-0 left-0 h-full w-full bg-[rgba(0,_0,_0,_0.35)]'
       onClick={onClick}
     >
-      {children}
+      <div onClick={(e) => e.stopPropagation()}>{children}</div>
     </div>
   );
 }
