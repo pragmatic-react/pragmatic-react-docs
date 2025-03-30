@@ -3,6 +3,7 @@
     /* Language and Environment */
     "target": "es2016",
     "jsx": "react-jsx",
+    "lib": ["es2017", "dom"],
 
     /* Modules */
     "module": "commonjs",
