@@ -1,10 +1,17 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
 import { addRestaurant, fetchRestaurants } from "../api/restaurant";
 import useFetch from "../hooks/useFetch";
 import useMutation from "../hooks/useMutation";
 import ErrorMessage from "./ErrorMessage";
 import useForm from "../hooks/useForm";
+import { Category } from "../types/restaurant";
+
+type FormData = {
+  name: string;
+  category: Category;
+  description: string;
+};
 
 function AddRestaurantModal({
   isOpen,
@@ -29,27 +36,18 @@ function AddRestaurantModal({
     enabled: false,
   });
 
-  const { register, errors } = useForm<"name" | "category" | "description">();
+  const { register, errors, onSubmit } = useForm<keyof FormData>();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    // if (!isFormValid) return;
-
-    e.preventDefault();
+  const handleSubmit = async (data: Record<string, string>) => {
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
-    const description = formData.get("description") as string;
-    console.log("name data", formData.get("name"));
-
-    const newRestaurant = {
-      id: new Date().toISOString(),
-      // category,
-      name,
-      description,
-    };
-
     try {
-      await addNewRestaurant(newRestaurant as any);
+      await addNewRestaurant({
+        id: Date.now().toString(),
+        name: data.name,
+        description: data.description,
+        category: data.category as Category,
+      });
       refetchRestaurants();
       onClose();
     } catch (error) {
@@ -59,9 +57,6 @@ function AddRestaurantModal({
     }
   };
 
-  // // TODO: 추후 validation 로직 추가
-  // const isFormValid = category !== "" && name !== "";
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <Modal.Header>
@@ -70,14 +65,16 @@ function AddRestaurantModal({
 
       <Modal.Body>
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={onSubmit(handleSubmit)}>
           {/* // TODO: select 중복 개선 */}
           <div className="form-item form-item--required">
             <label htmlFor="category text-caption">카테고리</label>
             <select
               name="category"
               id="category"
-              {...register("category")}
+              {...register("category", {
+                validate: (value: string) => value !== "",
+              })}
               required
             >
               <option value="">선택해 주세요</option>
@@ -88,8 +85,9 @@ function AddRestaurantModal({
               <option value="아시안">아시안</option>
               <option value="기타">기타</option>
             </select>
+
             {errors.category && (
-              <ErrorMessage>카테고리를 확인해 주세요.</ErrorMessage>
+              <ErrorMessage>카테고리를 선택해 주세요.</ErrorMessage>
             )}
           </div>
 
@@ -115,9 +113,7 @@ function AddRestaurantModal({
               id="description"
               cols={30}
               rows={5}
-              {...register("description", {
-                validate: (value: string) => value.length > 20,
-              })}
+              {...register("description")}
             ></textarea>
 
             <span className="help-text text-caption">
@@ -131,10 +127,7 @@ function AddRestaurantModal({
 
           <Modal.Footer>
             <Modal.ButtonContainer>
-              <Modal.Button
-                type="submit"
-                // disabled={!isFormValid || isSubmitting || isError}
-              >
+              <Modal.Button type="submit" disabled={isSubmitting || isError}>
                 {isSubmitting ? "추가 중..." : "추가하기"}
               </Modal.Button>
             </Modal.ButtonContainer>

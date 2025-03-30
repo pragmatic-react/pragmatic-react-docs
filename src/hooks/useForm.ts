@@ -1,4 +1,4 @@
-import { RefObject, useRef, useState } from "react";
+import { FormEvent, RefObject, useRef, useState } from "react";
 
 interface Options<T> {
   validate?: (value: T) => boolean;
@@ -33,7 +33,33 @@ const useForm = <TFields extends string>() => {
     };
   };
 
-  return { register, errors };
+  const onSubmit = (
+    callback: (formData: Record<TFields, string>) => Promise<void>
+  ) => {
+    return async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      const formData: Record<TFields, string> = {} as Record<TFields, string>;
+      fields.forEach((ref, field) => {
+        if (ref.current) {
+          formData[field] = ref.current.value;
+        }
+      });
+
+      try {
+        await callback(formData);
+      } catch (error) {
+        console.error("API 호출 중 에러 발생:", error);
+        throw error;
+      }
+    };
+  };
+
+  return {
+    register,
+    errors,
+    onSubmit,
+  };
 };
 
 export default useForm;
