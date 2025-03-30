@@ -6,6 +6,8 @@ import useMutation from "../hooks/useMutation";
 import ErrorMessage from "./ErrorMessage";
 import useForm from "../hooks/useForm";
 import { Category } from "../types/restaurant";
+import Select from "./Select";
+import { getCategoryOptions } from "../constants/categories";
 
 type FormData = {
   name: string;
@@ -68,10 +70,11 @@ function AddRestaurantModal({
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
         <form onSubmit={onSubmit(handleSubmit)}>
-          {/* // TODO: select 중복 개선 */}
           <div className="form-item form-item--required">
             <label htmlFor="category text-caption">카테고리</label>
-            <select
+
+            <Select
+              options={getCategoryOptions({ includeEmpty: true })}
               name="category"
               id="category"
               {...register("category", {
@@ -80,16 +83,7 @@ function AddRestaurantModal({
                 },
                 isRequired: true,
               })}
-              required
-            >
-              <option value="">선택해 주세요</option>
-              <option value="한식">한식</option>
-              <option value="중식">중식</option>
-              <option value="일식">일식</option>
-              <option value="양식">양식</option>
-              <option value="아시안">아시안</option>
-              <option value="기타">기타</option>
-            </select>
+            />
 
             {errors.category && <ErrorMessage>{errors.category}</ErrorMessage>}
           </div>
