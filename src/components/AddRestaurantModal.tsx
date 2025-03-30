@@ -36,7 +36,8 @@ function AddRestaurantModal({
     enabled: false,
   });
 
-  const { register, errors, onSubmit } = useForm<keyof FormData>();
+  const { register, errors, onSubmit, checkFormValidity } =
+    useForm<keyof FormData>();
 
   const handleSubmit = async (data: Record<string, string>) => {
     setIsSubmitting(true);
@@ -65,6 +66,7 @@ function AddRestaurantModal({
 
       <Modal.Body>
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+
         <form onSubmit={onSubmit(handleSubmit)}>
           {/* // TODO: select 중복 개선 */}
           <div className="form-item form-item--required">
@@ -76,6 +78,7 @@ function AddRestaurantModal({
                 validate: (value: string) => {
                   if (value === "") return "카테고리를 선택해 주세요.";
                 },
+                isRequired: true,
               })}
               required
             >
@@ -101,6 +104,7 @@ function AddRestaurantModal({
                 validate: (value: string) => {
                   if (value.length < 10) return "10자 이상 입력해 주세요.";
                 },
+                isRequired: true,
               })}
             />
 
@@ -128,7 +132,10 @@ function AddRestaurantModal({
 
           <Modal.Footer>
             <Modal.ButtonContainer>
-              <Modal.Button type="submit" disabled={isSubmitting || isError}>
+              <Modal.Button
+                type="submit"
+                disabled={isSubmitting || isError || !checkFormValidity()}
+              >
                 {isSubmitting ? "추가 중..." : "추가하기"}
               </Modal.Button>
             </Modal.ButtonContainer>
