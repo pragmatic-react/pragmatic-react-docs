@@ -3,4 +3,6 @@ export interface Restaurant {
   name: string;
   description: string;
   category: string;
+  distance: number;
+  link: string;
 }

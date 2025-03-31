@@ -1,5 +1,4 @@
 import React from 'react';
-
 interface ModalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   colorType: 'white' | 'orange';
   children: React.ReactNode;

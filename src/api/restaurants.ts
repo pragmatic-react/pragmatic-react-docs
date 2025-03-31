@@ -17,7 +17,12 @@ export const restaurantAPI = {
   },
 
   /** 레스토랑 생성 */
-  postRestaurant: (restaurant: Omit<Restaurant, 'id'>) => {
-    return client.post<CreateRestaurantResponse>(API_ENDPOINTS.RESTAURANTS, restaurant);
+  postRestaurant: async (restaurant: Omit<Restaurant, 'id'>) => {
+    const response = await client.post<CreateRestaurantResponse>(
+      API_ENDPOINTS.RESTAURANTS,
+      restaurant,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    return response;
   },
 };
