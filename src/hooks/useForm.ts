@@ -1,4 +1,4 @@
-import { FormEvent, RefObject, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 
 interface Options<T> {
   validate?: (value: T) => string | undefined; // undefined는 validate 통과한 상태
@@ -7,19 +7,19 @@ interface Options<T> {
 }
 
 const useForm = <TFields extends string>() => {
-  const fields = new Map<TFields, RefObject<any>>();
-  const fieldOptions = new Map<TFields, Options<any>>();
+  const fields = useRef<Map<TFields, HTMLInputElement | null>>(new Map()); // useRef로 필드 관리
+  const fieldOptions = useRef<Map<TFields, Options<any>>>(new Map()); // useRef로 옵션 관리
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<TFields, string>>
   >({});
   const [formErrorMessage, setFormError] = useState<string | null>(null);
 
   const validateField = (field: TFields) => {
-    const ref = fields.get(field);
-    const fieldOption = fieldOptions.get(field);
+    const ref = fields.current.get(field);
+    const fieldOption = fieldOptions.current.get(field);
 
-    if (ref?.current) {
-      const value = ref.current.value;
+    if (ref) {
+      const value = ref.value;
       const isRequired = fieldOption?.isRequired;
 
       // 필수 필드만 유효성 검사
@@ -38,13 +38,17 @@ const useForm = <TFields extends string>() => {
   };
 
   const register = <T>(field: TFields, options?: Options<T>) => {
-    if (!fields.has(field)) {
-      fields.set(field, useRef(options?.initialValue || null));
-      fieldOptions.set(field, options || {});
+    if (!fields.current.has(field)) {
+      fields.current.set(field, null);
+      fieldOptions.current.set(field, options || {});
     }
 
     return {
-      ref: fields.get(field),
+      ref: (el: HTMLElement | null) => {
+        if (el instanceof HTMLInputElement || el === null) {
+          fields.current.set(field, el);
+        }
+      },
       onChange: () => validateField(field),
       defaultValue: options?.initialValue,
     };
@@ -56,7 +60,7 @@ const useForm = <TFields extends string>() => {
     return async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      fields.forEach((_, field) => validateField(field));
+      fields.current.forEach((_, field) => validateField(field));
 
       if (!checkFormValidity()) {
         setFormError("폼 유효성 검사 실패했습니다.");
@@ -64,9 +68,9 @@ const useForm = <TFields extends string>() => {
       }
 
       const formData: Record<TFields, string> = {} as Record<TFields, string>;
-      fields.forEach((ref, field) => {
-        if (ref.current) {
-          formData[field] = ref.current.value;
+      fields.current.forEach((ref, field) => {
+        if (ref) {
+          formData[field] = ref.value;
         }
       });
 
@@ -82,11 +86,11 @@ const useForm = <TFields extends string>() => {
 
   // 필수 필드가 모두 유효한지 확인하는 함수
   const checkFormValidity = () => {
-    return Array.from(fields.keys()).every((field) => {
-      const ref = fields.get(field);
-      const options = fieldOptions.get(field);
+    return Array.from(fields.current.keys()).every((field) => {
+      const ref = fields.current.get(field);
+      const options = fieldOptions.current.get(field);
       if (options?.isRequired) {
-        const value = ref?.current?.value.trim() || "";
+        const value = ref?.value.trim() || "";
         return value !== "" && !fieldErrors[field];
       }
       return true;
