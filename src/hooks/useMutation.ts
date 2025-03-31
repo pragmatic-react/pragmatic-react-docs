@@ -35,6 +35,7 @@ const useMutation = <T, R>({
         setErrorMessage("An unknown error occurred");
       }
       setIsError(true);
+      throw err;
     } finally {
       setIsLoading(false);
     }

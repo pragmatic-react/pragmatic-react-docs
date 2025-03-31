@@ -24,11 +24,7 @@ function AddRestaurantModal({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const {
-    mutate: addNewRestaurant,
-    isError,
-    errorMessage,
-  } = useMutation({
+  const { mutate: addNewRestaurant } = useMutation({
     fn: addRestaurant,
   });
 
@@ -38,8 +34,13 @@ function AddRestaurantModal({
     enabled: false,
   });
 
-  const { register, errors, onSubmit, checkFormValidity } =
-    useForm<keyof FormData>();
+  const {
+    register,
+    fieldErrors,
+    onSubmit,
+    checkFormValidity,
+    formErrorMessage,
+  } = useForm<keyof FormData>();
 
   const handleSubmit = async (data: Record<string, string>) => {
     setIsSubmitting(true);
@@ -55,10 +56,13 @@ function AddRestaurantModal({
       onClose();
     } catch (error) {
       console.error("Failed to add new restaurant:", error);
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const isFormDisabled = !!formErrorMessage || isSubmitting;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -67,8 +71,6 @@ function AddRestaurantModal({
       </Modal.Header>
 
       <Modal.Body>
-        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-
         <form onSubmit={onSubmit(handleSubmit)}>
           <div className="form-item form-item--required">
             <label htmlFor="category text-caption">카테고리</label>
@@ -83,9 +85,12 @@ function AddRestaurantModal({
                 },
                 isRequired: true,
               })}
+              disabled={isFormDisabled}
             />
 
-            {errors.category && <ErrorMessage>{errors.category}</ErrorMessage>}
+            {fieldErrors.category && (
+              <ErrorMessage>{fieldErrors.category}</ErrorMessage>
+            )}
           </div>
 
           <div className="form-item form-item--required">
@@ -100,9 +105,12 @@ function AddRestaurantModal({
                 },
                 isRequired: true,
               })}
+              disabled={isFormDisabled}
             />
 
-            {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
+            {fieldErrors.name && (
+              <ErrorMessage>{fieldErrors.name}</ErrorMessage>
+            )}
           </div>
 
           <div className="form-item">
@@ -113,22 +121,27 @@ function AddRestaurantModal({
               cols={30}
               rows={5}
               {...register("description")}
-            ></textarea>
+              disabled={isFormDisabled}
+            />
 
             <span className="help-text text-caption">
               메뉴 등 추가 정보를 입력해 주세요.
             </span>
 
-            {errors.description && (
-              <ErrorMessage>{errors.description}</ErrorMessage>
+            {fieldErrors.description && (
+              <ErrorMessage>{fieldErrors.description}</ErrorMessage>
             )}
           </div>
+
+          {formErrorMessage && <ErrorMessage>{formErrorMessage}</ErrorMessage>}
 
           <Modal.Footer>
             <Modal.ButtonContainer>
               <Modal.Button
                 type="submit"
-                disabled={isSubmitting || isError || !checkFormValidity()}
+                disabled={
+                  isSubmitting || !!formErrorMessage || !checkFormValidity()
+                }
               >
                 {isSubmitting ? "추가 중..." : "추가하기"}
               </Modal.Button>

@@ -9,7 +9,33 @@ interface Options<T> {
 const useForm = <TFields extends string>() => {
   const fields = new Map<TFields, RefObject<any>>();
   const fieldOptions = new Map<TFields, Options<any>>();
-  const [errors, setErrors] = useState<Partial<Record<TFields, string>>>({});
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<TFields, string>>
+  >({});
+  const [formErrorMessage, setFormError] = useState<string | null>(null);
+
+  const validateField = (field: TFields) => {
+    const ref = fields.get(field);
+    const fieldOption = fieldOptions.get(field);
+
+    if (ref?.current) {
+      const value = ref.current.value;
+      const isRequired = fieldOption?.isRequired;
+
+      // 필수 필드만 유효성 검사
+      const errorMessage =
+        isRequired && value.trim() === ""
+          ? "필수 입력 항목입니다."
+          : fieldOption?.validate
+          ? fieldOption.validate(value)
+          : undefined;
+
+      setFieldErrors((prev) => ({
+        ...prev,
+        [field]: errorMessage,
+      }));
+    }
+  };
 
   const register = <T>(field: TFields, options?: Options<T>) => {
     if (!fields.has(field)) {
@@ -17,32 +43,9 @@ const useForm = <TFields extends string>() => {
       fieldOptions.set(field, options || {});
     }
 
-    const validateField = () => {
-      const ref = fields.get(field);
-      const fieldOption = fieldOptions.get(field);
-
-      if (ref?.current) {
-        const value = ref.current.value;
-        const isRequired = fieldOption?.isRequired;
-
-        // 필수 필드만 유효성 검사
-        const errorMessage =
-          isRequired && value.trim() === ""
-            ? "필수 입력 항목입니다."
-            : fieldOption?.validate
-            ? fieldOption.validate(value)
-            : undefined;
-
-        setErrors((prev) => ({
-          ...prev,
-          [field]: errorMessage,
-        }));
-      }
-    };
-
     return {
       ref: fields.get(field),
-      onChange: validateField,
+      onChange: () => validateField(field),
       defaultValue: options?.initialValue,
     };
   };
@@ -52,6 +55,13 @@ const useForm = <TFields extends string>() => {
   ) => {
     return async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+
+      fields.forEach((_, field) => validateField(field));
+
+      if (!checkFormValidity()) {
+        setFormError("폼 유효성 검사 실패했습니다.");
+        return;
+      }
 
       const formData: Record<TFields, string> = {} as Record<TFields, string>;
       fields.forEach((ref, field) => {
@@ -64,6 +74,7 @@ const useForm = <TFields extends string>() => {
         await callback(formData);
       } catch (error) {
         console.error("API 호출 중 에러 발생:", error);
+        setFormError("제출 중 문제가 발생했습니다. 다시 시도해주세요.");
         throw error;
       }
     };
@@ -76,7 +87,7 @@ const useForm = <TFields extends string>() => {
       const options = fieldOptions.get(field);
       if (options?.isRequired) {
         const value = ref?.current?.value.trim() || "";
-        return value !== "" && !errors[field];
+        return value !== "" && !fieldErrors[field];
       }
       return true;
     });
@@ -84,7 +95,8 @@ const useForm = <TFields extends string>() => {
 
   return {
     register,
-    errors,
+    fieldErrors,
+    formErrorMessage,
     onSubmit,
     checkFormValidity,
   };
