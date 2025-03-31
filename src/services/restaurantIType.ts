@@ -9,5 +9,5 @@ export type RestaurantCategoryType =
 export type RestaurantItemType = {
   name: string;
   category: RestaurantCategoryType;
-  description: string;
+  description?: string;
 };

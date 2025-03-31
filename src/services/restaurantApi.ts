@@ -11,7 +11,7 @@ export default class RestaurantService {
     data,
     config,
   }: {
-    data: RestaurantItemType & { id: string };
+    data: RestaurantItemType & { id: number };
     config?: AxiosRequestConfig<any>;
   }) {
     return axios.post("/restaurants", JSON.stringify(data), {
