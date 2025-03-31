@@ -1,6 +1,9 @@
 import { useRef } from "react";
 import RestaurantService from "../services/restaurantApi";
-import { RestaurantCategoryType } from "../services/restaurantIType";
+import { RestaurantItemType } from "../services/restaurantIType";
+import useForm from "../hooks/useForm";
+
+type formType = RestaurantItemType;
 
 export default function CreateRestaurant({
   closeModal,
@@ -13,20 +16,12 @@ export default function CreateRestaurant({
   const category = useRef("");
   const description = useRef("");
 
-  async function onSubmit() {
-    const data = {
-      name: name.current,
-      category: category.current,
-      description: description.current,
-    };
-
+  async function handleSubmit(values: formType) {
     try {
       await RestaurantService.CreateInfo({
         data: {
-          id: `a${Math.floor(Math.random() * 90) + 10}`,
-          name: data.name as string,
-          category: data.category as RestaurantCategoryType,
-          description: data.description as string,
+          id: Date.now(),
+          ...values,
         },
       });
 
@@ -38,37 +33,12 @@ export default function CreateRestaurant({
     }
   }
 
-  //   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //     e.preventDefault();
-
-  //     const formData = new FormData(e.currentTarget);
-
-  //     const data = {
-  //       name: formData.get("name"),
-  //       category: formData.get("category"),
-  //       description: formData.get("description"),
-  //     };
-
-  //     try {
-  //       await RestaurantService.CreateInfo({
-  //         data: {
-  //           id: `a${Math.floor(Math.random() * 90) + 10}`,
-  //           name: data.name as string,
-  //           category: data.category as RestaurantCategoryType,
-  //           description: data.description as string,
-  //         },
-  //       });
-
-  //       await refetch();
-  //       closeModal();
-  //     } catch (e) {
-  //       window.alert("예기치못한 에러가 발생했습니다.");
-  //       console.error(e);
-  //     }
-  //   };
+  const { formAction } = useForm({
+    handleSubmit,
+  });
 
   return (
-    <form>
+    <form action={formAction}>
       <div className="form-item form-item--required">
         <label htmlFor="category" className="text-caption">
           카테고리
@@ -133,11 +103,7 @@ export default function CreateRestaurant({
         >
           취소하기
         </button>
-        <button
-          type="button"
-          className="button button--primary text-caption"
-          onClick={onSubmit}
-        >
+        <button type="submit" className="button button--primary text-caption">
           추가하기
         </button>
       </div>
