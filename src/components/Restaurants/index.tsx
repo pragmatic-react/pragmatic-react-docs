@@ -1,9 +1,9 @@
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Restaurant as RestaurantType } from "../../models";
-import RestaurantInfoModal, {
+import RestaurantDetailModal, {
   RestaurantModalData,
-} from "./RestaurantInfoModal";
+} from "./RestaurantDetailModal";
 import RestaurantList from "./RestaurantList";
 import Section from "../../UI/Section";
 
@@ -33,7 +33,7 @@ const RestaurantSection = () => {
           <RestaurantList openRestaurantModal={openRestaurantInfoModal} />
         </Suspense>
       </ErrorBoundary>
-      <RestaurantInfoModal
+      <RestaurantDetailModal
         title={modalData.name}
         isOpen={infoModalOpen}
         description={modalData.description}
