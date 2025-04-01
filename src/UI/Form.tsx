@@ -10,6 +10,8 @@ import {
 const FormContext = createContext(null);
 
 export function Form({ children, onSubmit }) {
+  const formRef = useRef(null);
+
   const [formErrors, setFormErrors] = useState({
     category: true,
     name: true,
@@ -18,9 +20,9 @@ export function Form({ children, onSubmit }) {
   const formRefs = useRef({});
 
   return (
-    <form>
+    <form ref={formRef}>
       <FormContext.Provider
-        value={{ formErrors, setFormErrors, formRefs, onSubmit }}
+        value={{ formErrors, setFormErrors, formRefs, onSubmit, formRef }}
       >
         {children}
       </FormContext.Provider>
@@ -70,7 +72,7 @@ export function FormItem({ children, name, nextName, validation }) {
 }
 
 const FormSubmit = ({ children }) => {
-  const { formErrors, formRefs, onSubmit } = useContext(FormContext);
+  const { formErrors, formRefs, onSubmit, formRef } = useContext(FormContext);
   const [hasError, setHasError] = useState(true);
 
   useEffect(() => {
@@ -92,6 +94,8 @@ const FormSubmit = ({ children }) => {
         {}
       );
       onSubmit(values);
+
+      formRef.current.reset();
     }
   };
 
