@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-const Description = ({ onChange }, ref) => {
+const Description = ({ onChange, error }, ref) => {
   return (
     <div className="form-item">
       <label htmlFor="description">설명</label>
@@ -10,7 +10,7 @@ const Description = ({ onChange }, ref) => {
         onChange={onChange}
         ref={ref}
       />
-      {/* {error && <p className="error-text">{error}</p>} */}
+      {error && <p className="error-text">{error}</p>}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { forwardRef, useState } from "react";
-import { CATEGORIES, CATEGORY_PLACEHOLDER } from "../../models";
+import { CATEGORIES, CATEGORY_PLACEHOLDER } from "../../../models";
 
 const CategoryOption = ({ onChange, error }, ref) => {
   return (
