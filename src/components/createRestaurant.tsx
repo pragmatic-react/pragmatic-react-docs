@@ -33,7 +33,7 @@ export default function CreateRestaurant({
     }
   }
 
-  const { formAction } = useForm({
+  const { formAction, isPending } = useForm({
     handleSubmit,
   });
 
@@ -100,11 +100,16 @@ export default function CreateRestaurant({
           onClick={() => {
             closeModal();
           }}
+          disabled={isPending}
         >
           취소하기
         </button>
-        <button type="submit" className="button button--primary text-caption">
-          추가하기
+        <button
+          type="submit"
+          className="button button--primary text-caption"
+          disabled={isPending}
+        >
+          {isPending ? "추가중..." : "추가하기"}
         </button>
       </div>
     </form>
