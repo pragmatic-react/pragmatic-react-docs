@@ -1,7 +1,8 @@
 import { Restaurant } from '@/types';
-import { css } from '@emotion/react';
 import { RestaurantCategoryIcon } from '../../category-icon';
-import { descriptionStyle, distanceStyle, infoStyle, itemStyle, nameStyle } from './style';
+import { descriptionStyle, distanceStyle, infoStyle, infoTextStyle, infoWrapperStyle, itemStyle, nameStyle } from './style';
+import { FavoriteIcon } from '@/components/common';
+import { useBooleanState } from '@/hooks';
 
 interface RestaurantItemProps {
   item: Restaurant;
@@ -9,15 +10,27 @@ interface RestaurantItemProps {
 }
 
 export function RestaurantItem({ item, onItemClick }: RestaurantItemProps) {
-  const { name, category, description, distance } = item;
+  const { name, category, description, distance, is_favorite } = item;
+ 
+  const [isFavorite, toggleIsFavorite] = useBooleanState({initialState: is_favorite})
+
+  const onClick = (e: React.MouseEvent) => {
+      e.stopPropagation(); 
+      toggleIsFavorite();
+  }
 
   // TODO: 북마크 아이콘 추가
   return (
     <li css={itemStyle} onClick={() => onItemClick(item)}>
       <RestaurantCategoryIcon category={category} />
-      <div css={infoStyle}>
-        <h3 css={nameStyle}>{name}</h3>
-        <p css={distanceStyle}>캠퍼스로부터 {distance}분 내</p>
+      <div css={infoWrapperStyle}>
+        <div css={infoStyle}>
+          <div css={infoTextStyle}>
+            <h3 css={nameStyle}>{name}</h3>
+            <p css={distanceStyle}>캠퍼스로부터 {distance}분 내</p>
+          </div>
+          <FavoriteIcon onClick={onClick} isFavorite={isFavorite} />
+        </div>
         <p css={descriptionStyle}>{description}</p>
       </div>
     </li>
