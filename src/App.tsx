@@ -5,8 +5,8 @@ import Header from "./components/Header";
 import CategoryFilter from "./components/CategoryFilter";
 import { CategorySelectList } from "./types/restaurant";
 
-const FilteredRestaurantList = lazy(
-  () => import("./components/FilteredRestaurantList")
+const RestaurantListSection = lazy(
+  () => import("./components/RestaurantListSection")
 );
 import ApiErrorBoundary from "./errors/boundaries/ApiErrorBoundary";
 import GlobalErrorBoundary from "./errors/boundaries/GlobalErrorBoundary";
@@ -29,7 +29,7 @@ function App() {
 
           <ApiErrorBoundary>
             <Suspense fallback={<div>로딩중...</div>}>
-              <FilteredRestaurantList selectedCategory={selectedCategory} />
+              <RestaurantListSection selectedCategory={selectedCategory} />
             </Suspense>
           </ApiErrorBoundary>
         </main>

@@ -1,5 +1,5 @@
-import { CATEGORY_ICON } from "../../../constants/categories";
-import { Category } from "../../../types/restaurant";
+import { CATEGORY_ICON } from "../../../../constants/categories";
+import { Category } from "../../../../types/restaurant";
 
 const CategoryIcon = ({ category }: { category: Category }) => {
   return (
