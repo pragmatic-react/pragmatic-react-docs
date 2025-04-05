@@ -5,12 +5,14 @@ interface FieldConfig {
   initialValue?: any;
 }
 
-interface FormConfig {
-  fields: Record<string, FieldConfig>;
+export interface ExtendedFieldConfig<T> extends FieldConfig {}
+
+export interface FormConfig<T> {
+  fields: Record<string, ExtendedFieldConfig<T>>;
   onSubmit: (values: Record<string, any>) => Promise<void>;
 }
 
-export function useForm(config: FormConfig) {
+export function useForm<T>(config: FormConfig<T>) {
   const refs = useRef<Record<string, HTMLElement>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -82,7 +84,7 @@ export function useForm(config: FormConfig) {
   };
 
   // useActionState 사용시 오류 발생 ... formData가 안 넘어옴
-  // const [state, formAction, isPending] = useActionState(handleSubmit, {});
+  // const [state, formAction, isPending] = useActionState(handleSubmit, ()=>{});
 
   return {
     register,
