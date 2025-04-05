@@ -2,14 +2,11 @@ import React, { useContext, useEffect } from 'react';
 
 import { cn } from '@shared/utils';
 
-import { FormContext } from './FormContext';
+import { useFormContext } from './FormContext';
 import { FormItemProps } from './types';
 
 export const FormItem = ({ children, name, label, required, error, validator }: FormItemProps) => {
-  const context = useContext(FormContext);
-  if (!context) {
-    throw new Error('FormItem은 Form 컴포넌트 내부에서 사용되어야 합니다.');
-  }
+  const context = useFormContext();
 
   useEffect(() => {
     const value = context.values[name];

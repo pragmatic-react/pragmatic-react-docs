@@ -2,14 +2,11 @@ import { useContext } from 'react';
 
 import { Button } from '@shared/ui';
 
-import { FormContext } from './FormContext';
+import { FormContext, useFormContext } from './FormContext';
 import { FormResetProps, FormSubmitProps } from './types';
 
 export const FormSubmit = ({ children, disabled }: FormSubmitProps) => {
-  const context = useContext(FormContext);
-  if (!context) {
-    throw new Error('FormSubmit은 Form 컴포넌트 내부에서 사용되어야 합니다.');
-  }
+  const context = useFormContext();
 
   return (
     <Button
@@ -23,10 +20,7 @@ export const FormSubmit = ({ children, disabled }: FormSubmitProps) => {
 };
 
 export const FormReset = ({ children, disabled }: FormResetProps) => {
-  const context = useContext(FormContext);
-  if (!context) {
-    throw new Error('FormReset은 Form 컴포넌트 내부에서 사용되어야 합니다.');
-  }
+  const context = useFormContext();
 
   return (
     <Button type="button" onClick={context.onReset} disabled={disabled || context.isSubmitting} aria-label="폼 초기화">
