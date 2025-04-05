@@ -9,6 +9,11 @@ interface RestaurantItemProps {
   onItemClick: (item: Restaurant) => void;
 }
 
+// 예시
+function SomeSpecialSvgIconFor({ icon }: { icon: string }) {
+  return <div>custom {icon} ...</div>
+}
+
 export function RestaurantItem({ item, onItemClick }: RestaurantItemProps) {
   const { name, category, description, distance, is_favorite } = item;
  
@@ -17,7 +22,7 @@ export function RestaurantItem({ item, onItemClick }: RestaurantItemProps) {
 
   return (
     <li css={itemStyle} onClick={() => onItemClick(item)}>
-      <RestaurantCategoryIcon category={category} />
+      <RestaurantCategoryIcon category={category} render={(cat) => <SomeSpecialSvgIconFor icon={cat} />} />
       <div css={infoWrapperStyle}>
         <div css={infoStyle}>
           <div css={infoTextStyle}>
