@@ -2,7 +2,7 @@ import { Restaurant } from '@/types';
 import { RestaurantCategoryIcon } from '../../category-icon';
 import { descriptionStyle, distanceStyle, infoStyle, infoTextStyle, infoWrapperStyle, itemStyle, nameStyle } from './style';
 import { FavoriteIcon } from '@/components/common';
-import { useBooleanState } from '@/hooks';
+import { useFavoriteToggle } from '@/hooks';
 
 interface RestaurantItemProps {
   item: Restaurant;
@@ -12,14 +12,8 @@ interface RestaurantItemProps {
 export function RestaurantItem({ item, onItemClick }: RestaurantItemProps) {
   const { name, category, description, distance, is_favorite } = item;
  
-  const [isFavorite, toggleIsFavorite] = useBooleanState({initialState: is_favorite})
+  const { isFavorite, onClick } = useFavoriteToggle(is_favorite);
 
-  const onClick = (e: React.MouseEvent) => {
-      e.stopPropagation(); 
-      toggleIsFavorite();
-  }
-
-  // TODO: 북마크 아이콘 추가
   return (
     <li css={itemStyle} onClick={() => onItemClick(item)}>
       <RestaurantCategoryIcon category={category} />
