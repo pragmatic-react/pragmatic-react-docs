@@ -18,9 +18,17 @@ export const RestaurantListWidget = ({ category }: { category: Category | null }
     openModal();
   };
 
+  const handleFavoriteToggle = (id: string) => {
+    console.log(id);
+  };
+
   return (
     <div>
-      <RestaurantList data={restaurantList ?? []} handleCardClick={handleCardClick} />
+      <RestaurantList
+        data={restaurantList ?? []}
+        handleCardClick={handleCardClick}
+        handleFavoriteToggle={handleFavoriteToggle}
+      />
 
       <RestaurantDetailDrawer selected={selected} />
     </div>

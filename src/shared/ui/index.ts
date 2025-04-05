@@ -4,3 +4,4 @@ export * from './skeleton';
 export * from './error';
 export * from './button';
 export * from './form';
+export * from './icons';
