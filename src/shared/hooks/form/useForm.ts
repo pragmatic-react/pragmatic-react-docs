@@ -6,6 +6,7 @@ type UseFormOptions<T> = {
   onSubmit: (values: T) => void | Promise<void>;
   onReset?: () => void;
   validate?: (values: Partial<T>) => Record<keyof T, string>;
+  requiredFields?: Array<keyof T>;
 };
 
 export type UseFormResult<T> = {
@@ -30,6 +31,7 @@ export const useForm = <T extends Record<string, any>>({
   onSubmit,
   onReset,
   validate,
+  requiredFields = [],
 }: UseFormOptions<T>): UseFormResult<T> => {
   const [values, setValues] = useState<Partial<T>>(initialValues);
   const [errors, setErrors] = useState<Record<keyof T, string>>({} as Record<keyof T, string>);
@@ -81,7 +83,7 @@ export const useForm = <T extends Record<string, any>>({
           }
         }
 
-        const missingFields = Object.keys(initialValues).filter((key) => !(key in values));
+        const missingFields = requiredFields.filter((key) => !values[key]);
         if (missingFields.length > 0) {
           const missingErrors = missingFields.reduce(
             (acc, key) => ({ ...acc, [key]: '필수 입력 필드입니다.' }),
@@ -97,7 +99,7 @@ export const useForm = <T extends Record<string, any>>({
         setIsSubmitting(false);
       }
     },
-    [values, onSubmit, validate, initialValues],
+    [values, onSubmit, validate, requiredFields],
   );
 
   const handleReset = useCallback(() => {
