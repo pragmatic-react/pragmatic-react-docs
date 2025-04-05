@@ -12,7 +12,8 @@ interface RestaurantItemProps {
 export function RestaurantItem({ item, onItemClick }: RestaurantItemProps) {
   const { name, category, description, distance, is_favorite } = item;
  
-  const { isFavorite, onClick } = useFavoriteToggle(is_favorite);
+  const { isFavorite, onClick, iconVisible } = 
+    useFavoriteToggle({ isFavorite: is_favorite, iconVisible: true}); // iconVisible 을 변경해보세요!
 
   return (
     <li css={itemStyle} onClick={() => onItemClick(item)}>
@@ -23,7 +24,7 @@ export function RestaurantItem({ item, onItemClick }: RestaurantItemProps) {
             <h3 css={nameStyle}>{name}</h3>
             <p css={distanceStyle}>캠퍼스로부터 {distance}분 내</p>
           </div>
-          <FavoriteIcon onClick={onClick} isFavorite={isFavorite} />
+          <FavoriteIcon visible={iconVisible} onClick={onClick} isFavorite={isFavorite} />
         </div>
         <p css={descriptionStyle}>{description}</p>
       </div>

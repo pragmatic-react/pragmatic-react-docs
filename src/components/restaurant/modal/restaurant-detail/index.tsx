@@ -19,14 +19,15 @@ interface RestaurantDetailModalProps extends CommonModalProps {
 export function RestaurantDetailModal({ isOpen, onClose, item }: RestaurantDetailModalProps) {
   const { name, distance, description, link, category, is_favorite } = item;
 
-  const { isFavorite, onClick } = useFavoriteToggle(is_favorite);
+  const { isFavorite, onClick, iconVisible } = 
+    useFavoriteToggle({ isFavorite: is_favorite, iconVisible: true});
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} placement="bottom">
       <Modal.Header>
         <div css={headerWrapperStyle}>
           <RestaurantCategoryIcon category={category} />
-          <FavoriteIcon onClick={onClick} isFavorite={isFavorite} />
+          <FavoriteIcon visible={iconVisible} onClick={onClick} isFavorite={isFavorite} />
         </div>
         <p css={titleStyle}>{name}</p>
       </Modal.Header>
