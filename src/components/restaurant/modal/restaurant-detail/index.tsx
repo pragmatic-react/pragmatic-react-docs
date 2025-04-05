@@ -10,6 +10,7 @@ import {
   textWrapperStyle,
   titleStyle,
 } from './style';
+import { useBooleanState, useFavoriteToggle } from '@/hooks';
 
 interface RestaurantDetailModalProps extends CommonModalProps {
   item: Restaurant;
@@ -18,12 +19,15 @@ interface RestaurantDetailModalProps extends CommonModalProps {
 export function RestaurantDetailModal({ isOpen, onClose, item }: RestaurantDetailModalProps) {
   const { name, distance, description, link, category, is_favorite } = item;
 
+  const { isFavorite, onClick, iconVisible } = 
+    useFavoriteToggle({ isFavorite: is_favorite, iconVisible: true});
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} placement="bottom">
       <Modal.Header>
         <div css={headerWrapperStyle}>
           <RestaurantCategoryIcon category={category} />
-          <FavoriteIcon onClick={() => alert('북마크도 구현 중 ..!')} isFavorite={is_favorite} />
+          <FavoriteIcon visible={iconVisible} onClick={onClick} isFavorite={isFavorite} />
         </div>
         <p css={titleStyle}>{name}</p>
       </Modal.Header>

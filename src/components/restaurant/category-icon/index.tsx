@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 interface RestaurantCategoryIconProps {
   category: RestaurantCategory;
+  render?: (category: RestaurantCategory) => React.ReactNode;
 }
 
 const categoryStyle = css`
@@ -26,7 +27,7 @@ const categoryIconStyle = css`
   height: 36px;
 `;
 
-export function RestaurantCategoryIcon({ category, ...props }: RestaurantCategoryIconProps) {
+export function RestaurantCategoryIcon({ category, render, ...props }: RestaurantCategoryIconProps) {
   return (
     <div css={categoryStyle} {...props}>
       <img
