@@ -2,6 +2,8 @@ import { Restaurant, RestaurantIcon } from '@entities/restaurant';
 
 import { Icons } from '@shared/ui';
 
+import { useFavorite } from '../hooks';
+
 type RestaurantCardProps = {
   restaurant: Restaurant;
   onClick: () => void;
@@ -11,13 +13,16 @@ type RestaurantCardProps = {
 export const RestaurantCard = ({ restaurant, onClick, onFavoriteToggle }: RestaurantCardProps) => {
   const { category, name, description, id, isFavorite } = restaurant;
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onFavoriteToggle?.(id);
-  };
+  const { toggle, label } = useFavorite(id, isFavorite, onFavoriteToggle);
 
   return (
-    <li className="restaurant cursor-pointer" onClick={onClick}>
+    <li
+      className="restaurant cursor-pointer"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+    >
       <RestaurantIcon category={category} name={name} />
       <div className="restaurant__info flex-1">
         <div className="flex flex-1 items-center justify-between">
@@ -26,8 +31,8 @@ export const RestaurantCard = ({ restaurant, onClick, onFavoriteToggle }: Restau
             <button
               type="button"
               className="flex h-8 w-8 items-center justify-center"
-              onClick={handleFavoriteClick}
-              aria-label={isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+              onClick={toggle}
+              aria-label={label}
             >
               <Icons.Star filled={isFavorite} />
             </button>
