@@ -8,10 +8,11 @@ import { CategorySelect } from '@features/restaurant';
 
 import { Category } from '@entities/restaurant';
 
-import { ErrorBoundary, RestaurantSkeleton } from '@shared/ui';
+import { GlobalErrorBoundary, LoadingState, RestaurantSkeleton } from '@shared/ui';
 
 export const MainPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div>
@@ -23,23 +24,15 @@ export const MainPage = () => {
         </div>
 
         <section>
-          <ErrorBoundary
-            fallback={({ handleReset }) => (
-              <div className="flex h-full w-full items-center justify-center">
-                <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
-
-                <button onClick={handleReset} className="button--primary">
-                  다시 시도
-                </button>
-              </div>
-            )}
-          >
-            <Suspense fallback={<RestaurantSkeleton />}>
-              <ModalProvider>
-                <RestaurantListWidget category={category} />
-              </ModalProvider>
-            </Suspense>
-          </ErrorBoundary>
+          <GlobalErrorBoundary>
+            <LoadingState isLoading={isLoading} fallback={<RestaurantSkeleton />} aria-label="레스토랑 목록 로딩 중">
+              <Suspense fallback={<RestaurantSkeleton />}>
+                <ModalProvider>
+                  <RestaurantListWidget category={category} />
+                </ModalProvider>
+              </Suspense>
+            </LoadingState>
+          </GlobalErrorBoundary>
         </section>
       </main>
     </div>
