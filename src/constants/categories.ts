@@ -1,3 +1,5 @@
+import { Category } from "../types/restaurant";
+
 export const BASE_CATEGORY_OPTIONS = [
   { value: "한식", label: "한식" },
   { value: "중식", label: "중식" },
@@ -7,24 +9,11 @@ export const BASE_CATEGORY_OPTIONS = [
   { value: "기타", label: "기타" },
 ];
 
-interface CategoryOptionsConfig {
-  includeEmpty?: boolean; // "선택해 주세요" 포함 여부
-  includeAll?: boolean; // "전체" 포함 여부
-}
-
-export const getCategoryOptions = ({
-  includeAll,
-  includeEmpty,
-}: CategoryOptionsConfig = {}) => {
-  let options = [...BASE_CATEGORY_OPTIONS];
-
-  if (includeEmpty) {
-    options = [{ value: "", label: "선택해 주세요" }, ...options];
-  }
-
-  if (includeAll) {
-    options = [{ value: "전체", label: "전체" }, ...options];
-  }
-
-  return options;
+export const CATEGORY_ICON: Record<Category, string> = {
+  한식: "category-korean.png",
+  중식: "category-chinese.png",
+  일식: "category-japanese.png",
+  양식: "category-western.png",
+  아시안: "category-asian.png",
+  기타: "category-etc.png",
 };
