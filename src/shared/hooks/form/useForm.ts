@@ -1,12 +1,15 @@
 import { useCallback, useState } from 'react';
 import type { FormEvent } from 'react';
 
+type FieldValidator = (value: any) => void;
+
 type UseFormOptions<T> = {
   initialValues: Partial<T>;
   onSubmit: (values: T) => void | Promise<void>;
   onReset?: () => void;
   validate?: (values: Partial<T>) => Record<keyof T, string>;
   requiredFields?: Array<keyof T>;
+  validators?: Partial<Record<keyof T, FieldValidator>>;
 };
 
 export type UseFormResult<T> = {
@@ -32,6 +35,7 @@ export const useForm = <T extends Record<string, any>>({
   onReset,
   validate,
   requiredFields = [],
+  validators = {},
 }: UseFormOptions<T>): UseFormResult<T> => {
   const [values, setValues] = useState<Partial<T>>(initialValues);
   const [errors, setErrors] = useState<Record<keyof T, string>>({} as Record<keyof T, string>);
@@ -50,22 +54,44 @@ export const useForm = <T extends Record<string, any>>({
     });
   }, []);
 
+  const validateField = useCallback(
+    (name: keyof T, value: any) => {
+      let error = '';
+
+      if (requiredFields.includes(name) && !value) {
+        error = '필수 입력 필드입니다.';
+      }
+
+      if (!error && validators[name]) {
+        try {
+          validators[name]!(value);
+        } catch (e) {
+          error = e instanceof Error ? e.message : '유효성 검사에 실패했습니다.';
+        }
+      }
+
+      if (!error && validate) {
+        const validationErrors = validate({ ...values, [name]: value });
+        error = validationErrors[name] || '';
+      }
+
+      if (error) {
+        setFieldError(name, error);
+      } else {
+        clearFieldError(name);
+      }
+    },
+    [validators, requiredFields, validate, values, setFieldError, clearFieldError],
+  );
+
   const handleChange = useCallback(
     (name: keyof T) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       const { value } = e.target;
       setValues((prev) => ({ ...prev, [name]: value }));
       setTouched((prev) => ({ ...prev, [name]: true }));
-
-      if (validate) {
-        const validationErrors = validate({ ...values, [name]: value });
-        if (validationErrors[name]) {
-          setFieldError(name, validationErrors[name]);
-        } else {
-          clearFieldError(name);
-        }
-      }
+      validateField(name, value);
     },
-    [validate, setFieldError, clearFieldError],
+    [validateField],
   );
 
   const handleSubmit = useCallback(
@@ -74,22 +100,30 @@ export const useForm = <T extends Record<string, any>>({
       setIsSubmitting(true);
 
       try {
+        const allFieldErrors: Record<keyof T, string> = {} as Record<keyof T, string>;
+
+        Object.keys(values).forEach((key) => {
+          const fieldName = key as keyof T;
+          const value = values[fieldName];
+
+          if (requiredFields.includes(fieldName) && !value) {
+            allFieldErrors[fieldName] = '필수 입력 필드입니다.';
+          } else if (validators[fieldName]) {
+            try {
+              validators[fieldName]!(value);
+            } catch (e) {
+              allFieldErrors[fieldName] = e instanceof Error ? e.message : '유효성 검사에 실패했습니다.';
+            }
+          }
+        });
+
         if (validate) {
           const validationErrors = validate(values);
-          if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            setIsSubmitting(false);
-            return;
-          }
+          Object.assign(allFieldErrors, validationErrors);
         }
 
-        const missingFields = requiredFields.filter((key) => !values[key]);
-        if (missingFields.length > 0) {
-          const missingErrors = missingFields.reduce(
-            (acc, key) => ({ ...acc, [key]: '필수 입력 필드입니다.' }),
-            {} as Record<keyof T, string>,
-          );
-          setErrors(missingErrors);
+        if (Object.keys(allFieldErrors).length > 0) {
+          setErrors(allFieldErrors);
           setIsSubmitting(false);
           return;
         }
@@ -99,7 +133,7 @@ export const useForm = <T extends Record<string, any>>({
         setIsSubmitting(false);
       }
     },
-    [values, onSubmit, validate, requiredFields],
+    [values, onSubmit, validate, validators, requiredFields],
   );
 
   const handleReset = useCallback(() => {

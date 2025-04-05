@@ -1,34 +1,12 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 
 import { cn } from '@shared/utils';
 
 import { useFormContext } from './FormContext';
 import { FormItemProps } from './types';
 
-export const FormItem = ({ children, name, label, required, error, validator }: FormItemProps) => {
+export const FormItem = ({ children, name, label, required, error }: FormItemProps) => {
   const context = useFormContext();
-
-  useEffect(() => {
-    const value = context.values[name];
-    let validationError = '';
-
-    if (required && !value) {
-      validationError = '필수 입력 필드입니다.';
-    } else if (validator) {
-      try {
-        validator(value);
-      } catch (error) {
-        validationError = error instanceof Error ? error.message : '유효성 검사에 실패했습니다.';
-      }
-    }
-
-    if (validationError) {
-      context.setFieldError(name, validationError);
-    } else {
-      context.clearFieldError(name);
-    }
-  }, [context.values[name], required, validator, context.setFieldError, context.clearFieldError, name]);
-
   const hasError = error || context.errors[name];
 
   const childElement = React.isValidElement(children)
