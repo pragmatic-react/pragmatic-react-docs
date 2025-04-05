@@ -10,6 +10,7 @@ export const Button = ({ children, className, disabled, ...props }: ComponentPro
         disabled && 'button--disabled',
         className,
       )}
+      disabled={disabled}
       {...props}
     >
       {children}
