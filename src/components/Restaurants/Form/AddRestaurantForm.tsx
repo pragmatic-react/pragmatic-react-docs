@@ -18,16 +18,23 @@ const AddRestaurantForm = ({ onClose }) => {
   };
 
   return (
-    <Form onSubmit={onSubmit}>
+    <Form
+      onSubmit={onSubmit}
+      initialStep={"name"}
+      totalSteps={["name", "category", "description"]}
+    >
       <Form.Item
-        name="category"
-        nextName="name"
+        step="category"
+        labelName="카테고리"
+        nextStep="description"
         validation={[(v) => (!v ? "카테고리를 선택해 주세요." : null)]}
       >
         {(props) => <CategoryOption {...props} />}
       </Form.Item>
       <Form.Item
-        name="name"
+        step="name"
+        nextStep="category"
+        labelName="이름"
         validation={[
           (v) => (!v.trim() ? "이름을 입력해 주세요." : null),
           (v) => (v.length < 2 ? "이름은 2자 이상이어야 합니다." : null),
@@ -36,7 +43,8 @@ const AddRestaurantForm = ({ onClose }) => {
         {(props) => <Title {...props} />}
       </Form.Item>
       <Form.Item
-        name="description"
+        step="description"
+        labelName="설명"
         validation={[
           (v) => (v.length < 1 ? "설명을 추가해주세요" : null),
           (v) => (v.length > 200 ? "설명은 200자 이내로 입력해 주세요." : null),
@@ -53,6 +61,7 @@ const AddRestaurantForm = ({ onClose }) => {
               } text-caption`}
               disabled={props.hasError ? true : false}
               onClick={props.onSubmit}
+              type="submit"
             >
               추가하기
             </button>

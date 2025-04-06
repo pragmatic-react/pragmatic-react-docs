@@ -9,20 +9,31 @@ import {
 
 const FormContext = createContext(null);
 
-export function Form({ children, onSubmit }) {
+export function Form({ children, onSubmit, initialStep, totalSteps }) {
   const formRef = useRef(null);
-
-  const [formErrors, setFormErrors] = useState({
-    category: true,
-    name: true,
-    description: true,
-  });
-  const formRefs = useRef({});
+  const [formStep, setFormStep] = useState(initialStep);
+  const [formErrors, setFormErrors] = useState(
+    totalSteps?.reduce((prev, step) => {
+      prev[step] = true;
+      return prev;
+    }, {})
+  );
+  const formItemRefs = useRef({});
 
   return (
     <form ref={formRef}>
       <FormContext.Provider
-        value={{ formErrors, setFormErrors, formRefs, onSubmit, formRef }}
+        value={{
+          formErrors,
+          setFormErrors,
+          formItemRefs,
+          onSubmit,
+          formRef,
+          formStep,
+          setFormStep,
+          totalSteps,
+          initialStep,
+        }}
       >
         {children}
       </FormContext.Provider>
@@ -30,16 +41,9 @@ export function Form({ children, onSubmit }) {
   );
 }
 
-export function FormItem({ children, name, nextName, validation }) {
-  const [error, setError] = useState();
-  const { setFormErrors, formRefs } = useContext(FormContext);
-
-  // ref 초기화는 컴포넌트 최초 마운트시 한번만
-  if (!formRefs.current[name]) {
-    formRefs.current[name] = createRef();
-  }
-
+export function FormItem({ children, step, nextStep, validation, labelName }) {
   const validate = (value) => {
+    if (!value) return false;
     const result = validation?.map((v) => {
       return v(value);
     });
@@ -47,32 +51,102 @@ export function FormItem({ children, name, nextName, validation }) {
     return result.find((v) => v != null && v != undefined);
   };
 
+  const { setFormErrors, formItemRefs, formStep, setFormStep, totalSteps } =
+    useContext(FormContext);
+
+  const [error, setError] = useState(
+    (validate(formItemRefs.current?.[step]?.value) ? false : true) || true
+  );
+
+  // ref 초기화는 컴포넌트 최초 마운트시 한번만
+  if (!formItemRefs.current[step]) {
+    formItemRefs.current[step] = {
+      ref: createRef(),
+      value: "",
+    };
+  }
+
   const handleChange = (e) => {
-    //validation 체크
-    const errorMessage = validate(formRefs.current[name].current.value);
+    const errorMessage = validate(formItemRefs.current[step].ref.current.value);
+    // formstep을 변경하여도 이전 작성 내용을 기억하기 위함.
+    formItemRefs.current[step].value =
+      formItemRefs.current[step].ref.current.value;
     setError(errorMessage);
     setFormErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: errorMessage,
+      [step]: errorMessage ? true : false,
     }));
-
-    // 다음 input으로 포커스 이동
-    if (nextName) {
-      formRefs.current[nextName].current?.focus();
-    }
   };
 
-  return children({
-    ref: formRefs.current[name],
-    onChange: handleChange,
-    onBlur: handleChange,
-    name: name,
-    error: error,
-  });
+  const onClickNext = () => {
+    setFormStep(nextStep);
+  };
+
+  useEffect(() => {
+    if (step === formStep) {
+      formItemRefs.current[formStep].ref?.current.focus();
+    }
+  }, [formStep]);
+
+  return (
+    step === formStep && (
+      <div className="form-item">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignContent: "flex-start",
+          }}
+        >
+          {totalSteps.map((otherStep) => {
+            if (otherStep != step) {
+              return (
+                <div
+                  onClick={() => {
+                    if (error) {
+                      return;
+                    }
+                    setFormStep(otherStep);
+                  }}
+                  style={{ color: error ? "grey" : "black" }}
+                >
+                  {otherStep}
+                </div>
+              );
+            } else {
+              return <label htmlFor={step}>{labelName}</label>;
+            }
+          })}
+        </div>
+        {children({
+          ref: formItemRefs.current[step],
+          onChange: handleChange,
+          onBlur: handleChange,
+          step: step,
+          error: error,
+        })}
+        {nextStep && (
+          <div className="button-container">
+            <button
+              type="button"
+              className={`button ${
+                error ? "" : "button--primary"
+              } text-caption`}
+              disabled={error ? true : false}
+              onClick={onClickNext}
+            >
+              다음
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  );
 }
 
 const FormSubmit = ({ children }) => {
-  const { formErrors, formRefs, onSubmit, formRef } = useContext(FormContext);
+  const { formErrors, formItemRefs, onSubmit } = useContext(FormContext);
   const [hasError, setHasError] = useState(true);
 
   useEffect(() => {
@@ -80,13 +154,12 @@ const FormSubmit = ({ children }) => {
     setHasError(hasError);
   }, [formErrors]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     const hasError = Object.values(formErrors).some(Boolean);
     if (hasError) {
       console.warn("폼에 에러 있음!", formErrors);
     } else {
-      const values = Object.entries(formRefs.current).reduce(
+      const values = Object.entries(formItemRefs.current).reduce(
         (acc, [key, ref]) => {
           acc[key] = ref.current?.value;
           return acc;
@@ -94,8 +167,6 @@ const FormSubmit = ({ children }) => {
         {}
       );
       onSubmit(values);
-
-      formRef.current.reset();
     }
   };
 
