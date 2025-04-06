@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AddRestaurantModal from "../components/Restaurants/AddRestaurantModal";
+import AddRestaurantModal from "../widgets/AddRestaurantModal";
 
 const Header = () => {
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);

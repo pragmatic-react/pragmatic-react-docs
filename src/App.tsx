@@ -1,7 +1,7 @@
 import "./App.css";
 import { useState } from "react";
-import Header from "./components/Header";
-import MainPage from "./components/MainPage";
+import Header from "./pages/Header";
+import RestaurantPage from "./pages/RestaurantPage";
 import {
   FetchCacheManager,
   FetchCacheProvider,
@@ -19,7 +19,7 @@ function App() {
     >
       <>
         <Header />
-        <MainPage />
+        <RestaurantPage />
       </>
     </FetchCacheProvider>
   );

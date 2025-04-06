@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { Modal, ModalContextType } from "../../UI/Modal";
+import { Modal, ModalContextType } from "../shared/ui/Modal";
+import CardItem from "../shared/ui/CardItem";
 
 type ReviewDetail = {
   title: string;
@@ -17,20 +18,25 @@ interface ReviewDetailModalProps {
 
 const ReviewDetail = (reviewDetail: ReviewDetail) => {
   return (
-    <div className="review-detail">
-      <div className="review-detail__content">
-        <p>{reviewDetail.content}</p>
-      </div>
-      <div className="review-detail__author">
-        <span>{reviewDetail.author}</span>
-        <span>{reviewDetail.date}</span>
-      </div>
+    <CardItem className="review-detail">
       {reviewDetail.imageSrc && (
-        <div className="review-detail__image">
-          <img src={reviewDetail.imageSrc} alt={reviewDetail.title} />
-        </div>
+        <CardItem.Thumbnail
+          className={"review-detail__image"}
+          src={reviewDetail.imageSrc}
+          alt={reviewDetail.title}
+        />
       )}
-    </div>
+      <CardItem.Content>
+        <div className="review-detail__author">
+          <span>{reviewDetail.author}</span>
+          <span>{reviewDetail.date}</span>
+        </div>
+        <div className="review-detail__content">
+          <p>{reviewDetail.content}</p>
+          <p>{reviewDetail.rating}</p>
+        </div>
+      </CardItem.Content>
+    </CardItem>
   );
 };
 
