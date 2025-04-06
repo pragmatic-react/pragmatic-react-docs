@@ -11,9 +11,11 @@
     "server": "npx json-server db.json"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^5.0.0",
+    "tailwindcss": "^4.1.3",
     "typescript": "^5.8.2"
   },
   "devDependencies": {
