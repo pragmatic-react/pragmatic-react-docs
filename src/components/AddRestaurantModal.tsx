@@ -7,7 +7,7 @@ import ErrorMessage from "./ErrorMessage";
 import useForm from "../hooks/useForm";
 import { Category } from "../types/restaurant";
 import Select from "./Select";
-import { getCategoryOptions } from "../constants/categories";
+import { getCategoryOptions } from "../utils/getCategoryOptions";
 
 type FormData = {
   name: string;

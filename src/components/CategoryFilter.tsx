@@ -1,5 +1,5 @@
-import { getCategoryOptions } from "../constants/categories";
 import { CategorySelectList } from "../types/restaurant";
+import { getCategoryOptions } from "../utils/getCategoryOptions";
 import Select from "./Select";
 
 interface CategoryFilterProps {
