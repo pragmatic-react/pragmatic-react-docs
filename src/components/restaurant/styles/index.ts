@@ -17,7 +17,7 @@ export const infoWrapperStyle = css`
 `;
 
 export const infoStyle = css`
-  display: flex;;
+  display: flex;
   justify-content: space-between;
   align-items: start;
   width: 100%;
@@ -30,7 +30,6 @@ export const infoTextStyle = css`
   gap: 4px;
   width: 100%;
 `;
-
 
 export const nameStyle = css`
   margin: 0;

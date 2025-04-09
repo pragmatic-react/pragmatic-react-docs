@@ -1,38 +1,38 @@
 import { Restaurant } from '@/types';
-import { RestaurantCategoryIcon } from '../../category-icon';
-import { descriptionStyle, distanceStyle, infoStyle, infoTextStyle, infoWrapperStyle, itemStyle, nameStyle } from './style';
-import { FavoriteIcon } from '@/components/common';
 import { useFavoriteToggle } from '@/hooks';
+import { RestaurantCard } from './card';
+import { infoStyle, infoTextStyle } from '../../styles';
 
 interface RestaurantItemProps {
   item: Restaurant;
   onItemClick: (item: Restaurant) => void;
 }
 
-// 예시
-function SomeSpecialSvgIconFor({ icon }: { icon: string }) {
-  return <div>custom {icon} ...</div>
-}
-
 export function RestaurantItem({ item, onItemClick }: RestaurantItemProps) {
   const { name, category, description, distance, is_favorite } = item;
- 
-  const { isFavorite, onClick, iconVisible } = 
-    useFavoriteToggle({ isFavorite: is_favorite, iconVisible: true}); // iconVisible 을 변경해보세요!
+
+  const { isFavorite, onClick, iconVisible } = useFavoriteToggle({
+    isFavorite: is_favorite,
+    iconVisible: true,
+  });
 
   return (
-    <li css={itemStyle} onClick={() => onItemClick(item)}>
-      <RestaurantCategoryIcon category={category} render={(cat) => <SomeSpecialSvgIconFor icon={cat} />} />
-      <div css={infoWrapperStyle}>
+    <RestaurantCard onClick={() => onItemClick(item)}>
+      <RestaurantCard.Icon category={category} />
+      <RestaurantCard.Info>
         <div css={infoStyle}>
           <div css={infoTextStyle}>
-            <h3 css={nameStyle}>{name}</h3>
-            <p css={distanceStyle}>캠퍼스로부터 {distance}분 내</p>
+            <RestaurantCard.Name>{name}</RestaurantCard.Name>
+            <RestaurantCard.Distance>{distance}</RestaurantCard.Distance>
           </div>
-          <FavoriteIcon visible={iconVisible} onClick={onClick} isFavorite={isFavorite} />
+          <RestaurantCard.Favorite
+            isFavorite={isFavorite}
+            onClick={onClick}
+            visible={iconVisible}
+          />
         </div>
-        <p css={descriptionStyle}>{description}</p>
-      </div>
-    </li>
+        <RestaurantCard.Description>{description}</RestaurantCard.Description>
+      </RestaurantCard.Info>
+    </RestaurantCard>
   );
 }
