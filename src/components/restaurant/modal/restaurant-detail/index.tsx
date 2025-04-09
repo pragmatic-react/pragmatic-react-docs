@@ -1,7 +1,8 @@
-import { Button, CommonModalProps, Modal, RestaurantCategoryIcon } from '@/components';
+import { Button, CommonModalProps, Modal } from '@/components';
 import { Restaurant } from '@/types';
-import { headerWrapperStyle, itemInfoStyle, linkStyle, textWrapperStyle } from './style';
 import { useFavoriteToggle } from '@/hooks';
+import { headerWrapperStyle, itemInfoStyle, linkStyle, textWrapperStyle } from './style';
+
 import { RestaurantCard as Card } from '../../card';
 
 interface RestaurantDetailModalProps extends CommonModalProps {

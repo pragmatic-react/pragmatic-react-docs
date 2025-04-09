@@ -32,6 +32,10 @@ export const infoTextStyle = css`
 `;
 
 export const nameStyle = css`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
   margin: 0;
 `;
 

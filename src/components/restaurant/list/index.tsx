@@ -36,13 +36,13 @@ export function RestaurantList() {
         const data = await getRestaurantList();
         setRestaurants(data);
       } catch (error) {
-        console.error("레스토랑 목록을 가져오는 데 실패했습니다.", error);
+        console.error('레스토랑 목록을 가져오는 데 실패했습니다.', error);
       }
     };
 
     fetchData();
   }, [setRestaurants]);
-  
+
   return (
     <section css={containerStyle}>
       {restaurants.length > 0 ? (

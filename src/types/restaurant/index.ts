@@ -1,6 +1,7 @@
-import { RESTAURANT_CATEGORY } from '@/consts';
+import { RESTAURANT_CATEGORY_LABEL, RESTAURANT_CATEGORY } from '@/consts';
 
 export type RestaurantCategory = keyof typeof RESTAURANT_CATEGORY;
+export type RestaurantBadgeLabel = keyof typeof RESTAURANT_CATEGORY_LABEL;
 
 export interface Restaurant {
   id: number;

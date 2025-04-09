@@ -6,3 +6,9 @@ export const RESTAURANT_CATEGORY = {
   아시안: 'asian',
   기타: 'etc',
 };
+
+export const RESTAURANT_CATEGORY_LABEL = {
+  new: '새로 오픈',
+  closed: '휴무',
+  ad: '광고',
+};
