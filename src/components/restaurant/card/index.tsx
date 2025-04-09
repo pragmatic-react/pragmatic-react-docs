@@ -1,8 +1,11 @@
 import { ReactNode } from 'react';
 import { RestaurantCategory } from '@/types';
 import { FavoriteIcon } from '@/components/common';
+import { RESTAURANT_CATEGORY } from '@/consts';
 
 import {
+  categoryIconStyle,
+  categoryStyle,
   descriptionStyle,
   distanceStyle,
   infoStyle,
@@ -11,12 +14,6 @@ import {
   itemStyle,
   nameStyle,
 } from '../styles';
-import { RestaurantCategoryIcon } from '../category-icon';
-
-function SomeSpecialSvgIconFor({ icon }: { icon: string }) {
-  return <div>custom {icon} ...</div>;
-}
-
 interface RestaurantCarProps {
   children: ReactNode;
   onClick?: () => void;
@@ -30,12 +27,25 @@ function RestaurantCard({ children, onClick }: RestaurantCarProps) {
   );
 }
 
-function Icon({ category }: { category: RestaurantCategory }) {
+function Icon({
+  category,
+  render,
+}: {
+  category: RestaurantCategory;
+  render?: (category: RestaurantCategory) => React.ReactNode;
+}) {
+  if (render) {
+    return render;
+  }
+
   return (
-    <RestaurantCategoryIcon
-      category={category}
-      render={(exampleIcon) => <SomeSpecialSvgIconFor icon={exampleIcon} />}
-    />
+    <div css={categoryStyle}>
+      <img
+        css={categoryIconStyle}
+        src={`/assets/category-${RESTAURANT_CATEGORY[category]}.png`}
+        alt={category}
+      />
+    </div>
   );
 }
 
