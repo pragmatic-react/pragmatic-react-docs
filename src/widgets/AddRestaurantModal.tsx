@@ -1,6 +1,6 @@
-import { Modal, ModalContextType } from "../../UI/Modal";
-import AddRestaurantForm from "./Form/AddRestaurantForm";
-import { Restaurant as RestaurantType } from "../../models";
+import { Modal, ModalContextType } from "../shared/ui/Modal";
+import AddRestaurantForm from "../features/create-restaurant/AddRestaurantForm";
+import { Restaurant as RestaurantType } from "../models";
 
 export type RestaurantModalData = Pick<RestaurantType, "name" | "description">;
 

@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 * {
   padding: 0;
   margin: 0;
@@ -123,9 +125,14 @@ body {
 .restaurant {
   display: flex;
   align-items: flex-start;
-
   padding: 16px 8px;
+  border-bottom: 1px solid #e9eaed;
+}
 
+.review-summary {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 8px;
   border-bottom: 1px solid #e9eaed;
 }
 
@@ -137,9 +144,7 @@ body {
   height: 64px;
   min-width: 64px;
   min-height: 64px;
-
   margin-right: 16px;
-
   border-radius: 50%;
   background: var(--lighten-color);
 }
@@ -149,21 +154,21 @@ body {
   height: 36px;
 }
 
-.restaurant__info {
+.__info {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
-.restaurant__name {
+.__name {
   margin: 0;
 }
 
-.restaurant__distance {
+.__distance {
   color: var(--primary-color);
 }
 
-.restaurant__description {
+.__description {
   display: -webkit-box;
 
   padding-top: 8px;

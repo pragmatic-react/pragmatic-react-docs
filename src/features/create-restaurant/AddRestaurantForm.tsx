@@ -1,9 +1,8 @@
-import useAddRestaurant from "../../../hooks/useAddRestaurant";
-import useForm2 from "../../../hooks/useForm2";
-import CategoryOption from "./CategoryOption";
-import Title from "./Title";
-import Description from "./Description";
-import Form from "../../../UI/Form";
+import useAddRestaurant from "../../hooks/useAddRestaurant";
+import CategoryOption from "./Form/CategoryOption";
+import Title from "./Form/Title";
+import Description from "./Form/Description";
+import Form from "../../shared/ui/Form";
 
 const AddRestaurantForm = ({ onClose }) => {
   const { addRestaurant } = useAddRestaurant();
