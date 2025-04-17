@@ -1,6 +1,9 @@
 import { Suspense, useState, useEffect, ReactNode } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Restaurant as RestaurantType } from "../entities/restaurant/restaurant.type";
+import {
+  Restaurant as RestaurantType,
+  RestaurantDto,
+} from "../entities/restaurant/restaurant.type";
 import RestaurantDetailModal, {
   RestaurantModalData,
 } from "./RestaurantDetailModal";
@@ -10,6 +13,8 @@ import CardItem from "../shared/ui/CardItem";
 import { transformRestauranstDtoToRestaurant } from "../entities/restaurant/restaurant.lib";
 import { useFetch } from "../utils/FetchCacheManager";
 import { BookmarkRestaurantButoon } from "../features/bookmark-restaurants/bookmark-restaurnats.ui";
+import RestaurantStateBadge from "./RestaurantStateBadge";
+import RestaurantMetaInfo from "./RestaurantMetaInfo";
 
 type RestaurantItemProps = {
   restaurant: RestaurantType;
@@ -34,8 +39,11 @@ const RestaurantItem = (props: RestaurantItemProps) => {
           <h3 className="__name text-subtitle">{restaurant.name}</h3>
           <p className="__description text-body">{restaurant.description}</p>
         </div>
+        <RestaurantStateBadge status={restaurant.state} />
       </CardItem.Content>
       {action}
+      <RestaurantMetaInfo metaInfo={restaurant.metaInfo} />
+      {/* CardItem.MetaInfo */}
     </CardItem>
   );
 };
@@ -46,8 +54,8 @@ const RestaurantList = ({
   openRestaurantModal: (data: RestaurantType) => void;
 }) => {
   const { data: generalRestaurants, reload: getRestaurants } =
-    useFetch<RestaurantType[]>("restaurants");
-  const [restaurants, setRestaurant] = useState<RestaurantType[]>([]);
+    useFetch<RestaurantDto[]>("restaurants"); // dto로 변경 필요
+  const [restaurants, setRestaurant] = useState<RestaurantType[]>([]); //dto로 변경필요
 
   useEffect(() => {
     setRestaurant(

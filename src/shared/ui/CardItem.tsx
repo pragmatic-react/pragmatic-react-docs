@@ -1,4 +1,5 @@
 import { PropsWithChildren } from "react";
+import Badge from "./Badge";
 
 /**
  * 카드 형태의 item
