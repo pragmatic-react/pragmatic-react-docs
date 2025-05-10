@@ -1,14 +1,23 @@
-import { Restaurant, RestaurantCard } from '@entities/restaurant';
+import { RestaurantCard } from '@features/restaurant';
 
-import { RestaurantSkeleton } from '@shared/ui';
+import { Restaurant } from '@entities/restaurant';
 
-type Props = { data: Restaurant[]; handleCardClick: (restaurant: Restaurant) => () => void };
+type Props = {
+  data: Restaurant[];
+  handleCardClick: (restaurant: Restaurant) => () => void;
+  handleFavoriteToggle: (id: string) => void;
+};
 
-export const RestaurantList = ({ data, handleCardClick }: Props) => {
+export const RestaurantList = ({ data, handleCardClick, handleFavoriteToggle }: Props) => {
   return (
     <ul className="restaurant-list-container">
       {data?.map((restaurant) => (
-        <RestaurantCard key={restaurant.id} restaurant={restaurant} onClick={handleCardClick(restaurant)} />
+        <RestaurantCard
+          key={restaurant.id}
+          restaurant={restaurant}
+          onClick={handleCardClick(restaurant)}
+          onFavoriteToggle={handleFavoriteToggle}
+        />
       ))}
     </ul>
   );

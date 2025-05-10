@@ -1,27 +1,23 @@
-import { useState } from 'react';
+import { Category } from '@entities/restaurant';
 
-import { useModal } from '@features/modal';
-
-import { Category, Restaurant, useGetFavoriteRestaurantData, useGetRestaurantData } from '@entities/restaurant';
-import { useGetUserInfo } from '@entities/user';
-
+import { useRestaurantList } from '../hooks';
 import { RestaurantDetailDrawer } from './RestaurantDetailDrawer';
 import { RestaurantList } from './RestaurantList';
 
-export const RestaurantListWidget = ({ category }: { category: Category | null }) => {
-  const { data: restaurantList } = useGetRestaurantData(category);
-  const { openModal } = useModal();
-  const [selected, setSelected] = useState<Restaurant | null>(null);
+type Props = {
+  category: Category | null;
+};
 
-  const handleCardClick = (restaurant: Restaurant) => () => {
-    setSelected(restaurant);
-    openModal();
-  };
+export const RestaurantListWidget = ({ category }: Props) => {
+  const { restaurantList, selected, handleCardClick, handleFavoriteToggle } = useRestaurantList(category);
 
   return (
     <div>
-      <RestaurantList data={restaurantList ?? []} handleCardClick={handleCardClick} />
-
+      <RestaurantList
+        data={restaurantList}
+        handleCardClick={handleCardClick}
+        handleFavoriteToggle={handleFavoriteToggle}
+      />
       <RestaurantDetailDrawer selected={selected} />
     </div>
   );
