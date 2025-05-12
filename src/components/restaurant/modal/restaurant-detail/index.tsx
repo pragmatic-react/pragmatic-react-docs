@@ -1,15 +1,9 @@
-import { Button, CommonModalProps, Modal, RestaurantCategoryIcon } from '@/components';
-import { FavoriteIcon } from '@/components';
+import { Button, CommonModalProps, Modal } from '@/components';
 import { Restaurant } from '@/types';
-import {
-  descriptionStyle,
-  distanceStyle,
-  headerWrapperStyle,
-  itemInfoStyle,
-  linkStyle,
-  textWrapperStyle,
-  titleStyle,
-} from './style';
+import { useFavoriteToggle } from '@/hooks';
+import { headerWrapperStyle, itemInfoStyle, linkStyle, textWrapperStyle } from './style';
+
+import { RestaurantCard as Card } from '../../card';
 
 interface RestaurantDetailModalProps extends CommonModalProps {
   item: Restaurant;
@@ -18,19 +12,24 @@ interface RestaurantDetailModalProps extends CommonModalProps {
 export function RestaurantDetailModal({ isOpen, onClose, item }: RestaurantDetailModalProps) {
   const { name, distance, description, link, category, is_favorite } = item;
 
+  const { isFavorite, onClick, iconVisible } = useFavoriteToggle({
+    isFavorite: is_favorite,
+    iconVisible: true,
+  });
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} placement="bottom">
       <Modal.Header>
         <div css={headerWrapperStyle}>
-          <RestaurantCategoryIcon category={category} />
-          <FavoriteIcon onClick={() => alert('북마크도 구현 중 ..!')} isFavorite={is_favorite} />
+          <Card.Icon category={category} />
+          <Card.Favorite isFavorite={isFavorite} onClick={onClick} visible={iconVisible} />
         </div>
-        <p css={titleStyle}>{name}</p>
+        <Card.Name>{name}</Card.Name>
       </Modal.Header>
       <Modal.Body css={itemInfoStyle}>
         <div css={textWrapperStyle}>
-          <p css={distanceStyle}>캠퍼스로부터 {distance}분 내</p>
-          <p css={descriptionStyle}>{description}</p>
+          <Card.Distance>{distance}</Card.Distance>
+          <Card.Description>{description}</Card.Description>
           <p css={linkStyle} onClick={() => window.open(link)}>
             {link}
           </p>

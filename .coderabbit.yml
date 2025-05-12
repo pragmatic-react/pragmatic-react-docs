@@ -1,0 +1,44 @@
+# .coderabbit.yml
+
+review:
+  trigger_keywords:
+    - "@coderabbit review"
+    - "review please"
+  auto_review: true
+  review_existing_prs: true  # 기존에 열린 PR도 리뷰하게 설정
+
+  code_style: "react"
+
+  linting_rules:
+    - "react/recommended"
+    - "jsx-a11y/recommended"
+    - "import/errors"
+    - "import/warnings"
+    - "import/react"
+
+  include_paths:
+    - "src/**/*.tsx"
+    - "src/**/*.ts"
+    - "components/**/*.tsx"
+    - "pages/**/*.tsx"
+    - "hooks/**/*.ts"
+
+  exclude_paths:
+    - "docs/**"
+    - "tests/**"
+    - "node_modules/**"
+    - "public/**"
+
+  max_review_comments: 30
+
+  react_rules:
+    jsx_no_bind: true
+    jsx_no_comment_textnodes: true
+    react_hooks_rules:
+      rules_of_hooks: true
+      exhaustive_deps: true
+
+  custom_rules:
+    prefer_functional_components: true
+    use_strict_typing: true
+    enforce_tailwind_usage: true
